@@ -5,3 +5,5 @@ venv/
 uploads/
 
 .env
+
+node_modules
