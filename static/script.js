@@ -15,6 +15,19 @@ function transcribeAudio() {
     })
     .catch(error => console.error('Error:', error));
 }
+function transcribeUrl() {
+    const url = document.getElementById('url');
+
+    fetch('/extract_audio', {
+        method: 'POST',
+        body: url,
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('transcription').value = data.transcription;
+    })
+    .catch(error => console.error('Error:', error));
+}
 
 // Modify the transcription
 function modifyText() {
