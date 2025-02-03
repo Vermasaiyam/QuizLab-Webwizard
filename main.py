@@ -19,7 +19,7 @@ CORS(app)
 model = whisper.load_model("base")
 
 # Groq API client
-client = Groq(api_key='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')
+client = Groq(api_key='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')
 
 SCOPES = ['https://www.googleapis.com/auth/documents']
 
