@@ -9,6 +9,7 @@ const HistoryPage = () => {
     const [history, setHistory] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState(null);
+    const [videoDetails, setVideoDetails] = useState(null);
     const selectedVideoRef = useRef(null);
 
     const { user } = useSelector(store => store.auth);
@@ -87,6 +88,81 @@ const HistoryPage = () => {
         );
     };
 
+    const fetchVideoDetails = async () => {
+        try {
+            const response = await axios.get(`http://localhost:8000/api/video/summary/${selectedVideo.id}`, {
+                withCredentials: true, // Send cookies with request
+            });
+            if (response.data.success) {
+                setVideoDetails(response.data.video);
+            } else {
+                alert("Failed to fetch video details.");
+            }
+        } catch (error) {
+            console.error("Error fetching video details:", error);
+            alert("An error occurred while fetching video details.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleGenerateQuiz = async () => {
+        try {
+            setLoading(true);
+            
+            await fetchVideoDetails();
+
+            const transcription = videoDetails.transcription;
+
+            const response = await axios.post(
+                'http://127.0.0.1:5000/modify',
+                {
+                    modification_input: 'give me the 5 quiz questions from the text in JSON format, in the format of question as string, options as array of strings, correctAns as string.',
+                    transcription: transcription,
+                },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            console.log('Response from Python backend:', response.data);
+
+            let modifiedText = response.data.modified_text;
+
+            console.log("modifiedText", modifiedText);
+
+            // Clean the response by extracting the JSON part
+            const jsonStartIndex = modifiedText.indexOf('[');
+            const jsonEndIndex = modifiedText.lastIndexOf(']') + 1;
+            const jsonString = modifiedText.slice(jsonStartIndex, jsonEndIndex);
+
+            console.log('Extracted JSON string:', jsonString);
+
+            const quizQuestions = JSON.parse(jsonString);
+
+            console.log('Parsed quiz questions:', quizQuestions);
+
+            // Send the modified questions to the backend
+            const saveQuizResponse = await axios.post(
+                'http://localhost:8000/api/question/saveQuestion',
+                { quizQuestions: quizQuestions, videoId: videoDetails._id },
+                { headers: { 'Content-Type': 'application/json' } }
+            );
+
+            if (saveQuizResponse.data.success) {
+                alert('Quiz generated successfully!');
+            } else {
+                // alert('Failed to save quiz.');
+                console.log("Failed to save the quiz");
+            }
+            navigate(`/quiz/${videoDetails._id}`);
+        } catch (error) {
+            console.error('Error generating quiz:', error.message);
+            // alert(error.message);
+        } finally {
+            setLoading(false);
+            navigate(`/quiz/${videoDetails._id}`);
+        }
+    };
+
     return (
         <div className="max-w-5xl min-h-[80vh] mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
@@ -139,43 +215,58 @@ const HistoryPage = () => {
                             <p className="mt-4 text-gray-700 leading-relaxed">{selectedVideo.summary}</p>
                             <p className="mt-4 text-gray-600 leading-relaxed italic">{selectedVideo.transcription}</p>
 
-                            <div className="mt-6 flex items-center gap-2">
-                                <span className="text-lg font-semibold text-gray-700">Score:</span>
-                                <div className="text-black px-3 py-1 rounded-full text-sm font-medium">
-                                    {getCircleScore()}
-                                </div>
-                            </div>
+                            {
+                                selectedVideo.questions && selectedVideo.questions.length > 0 ? (
+                                    <>
+                                        <div className="mt-6 flex items-center gap-2">
+                                            <span className="text-lg font-semibold text-gray-700">Score:</span>
+                                            <div className="text-black px-3 py-1 rounded-full text-sm font-medium">
+                                                {getCircleScore()}
+                                            </div>
+                                        </div>
+                                        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+                                            <h3 className="text-xl font-semibold text-gray-800 mb-4">Quiz Questions</h3>
+                                            <ul className="space-y-6">
+                                                {selectedVideo.questions?.map((question, index) => (
+                                                    <li key={index} className="bg-gray-50 p-4 rounded-lg border">
 
-                            <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-                                <h3 className="text-xl font-semibold text-gray-800 mb-4">Quiz Questions</h3>
-                                <ul className="space-y-6">
-                                    {selectedVideo.questions?.map((question, index) => (
-                                        <li key={index} className="bg-gray-50 p-4 rounded-lg border">
+                                                        <p className="font-medium text-gray-900">{question.question}</p>
 
-                                            <p className="font-medium text-gray-900">{question.question}</p>
+                                                        <ul className="mt-3 space-y-2">
+                                                            {question.options?.map((option, idx) => (
+                                                                <li
+                                                                    key={idx}
+                                                                    className={`p-2 rounded-lg ${option === question.correctAns ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700'
+                                                                        }`}
+                                                                >
+                                                                    {option} {option === question.correctAns && '✅'}
+                                                                </li>
+                                                            ))}
+                                                        </ul>
 
-                                            <ul className="mt-3 space-y-2">
-                                                {question.options?.map((option, idx) => (
-                                                    <li
-                                                        key={idx}
-                                                        className={`p-2 rounded-lg ${option === question.correctAns ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700'
-                                                            }`}
-                                                    >
-                                                        {option} {option === question.correctAns && '✅'}
+                                                        <div className="mt-3 flex items-center gap-2">
+                                                            <span className="font-semibold text-gray-800">Correct Answer:</span>
+                                                            <span className="bg-green-500 text-white px-3 py-1 rounded-md text-sm font-medium">
+                                                                {question.correctAns}
+                                                            </span>
+                                                        </div>
                                                     </li>
                                                 ))}
                                             </ul>
-
-                                            <div className="mt-3 flex items-center gap-2">
-                                                <span className="font-semibold text-gray-800">Correct Answer:</span>
-                                                <span className="bg-green-500 text-white px-3 py-1 rounded-md text-sm font-medium">
-                                                    {question.correctAns}
-                                                </span>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className="mt-6 text-center">
+                                        <p className="text-lg text-gray-700 mb-4">No quiz taken yet.</p>
+                                        <button
+                                            onClick={handleGenerateQuiz}
+                                            className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all"
+                                        >
+                                            Take Quiz
+                                        </button>
+                                    </div>
+                                )
+                            }
                         </div>
                     )}
                 </>

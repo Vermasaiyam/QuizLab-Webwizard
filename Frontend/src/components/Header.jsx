@@ -121,7 +121,7 @@ export default function Header() {
 
       {/* Mobile Menu - Only visible when menu is open */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-gray-900 shadow-lg">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-gray-900 shadow-lg z-10">
           <nav className="flex flex-col items-center space-y-4 py-4">
             {["Home", "History", "About", "Contact"].map((item) => {
               const path = `${item.toLowerCase() === "home" ? "/" : item.toLowerCase()
