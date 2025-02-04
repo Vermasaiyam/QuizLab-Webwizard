@@ -22,12 +22,22 @@ export default function Home() {
         if (loading) {
             let step = 0;
             const interval = setInterval(() => {
-                setLoadingStep((prev) => (prev + 1) % loadingTexts.length);
-            }, 2000); // Change text every 2 seconds
+                setLoadingStep((prev) => {
+                    if (prev + 1 < loadingTexts.length) {
+                        return prev + 1;
+                    } else {
+                        clearInterval(interval); // Stop when last message is reached
+                        return prev;
+                    }
+                });
+            }, 5000); // Change text every 5 seconds
 
             return () => clearInterval(interval);
+        } else {
+            setLoadingStep(0); // Reset when loading is false
         }
     }, [loading]);
+
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
