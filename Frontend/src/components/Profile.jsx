@@ -1,4 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import useGetUserProfile from '../hooks/getUserProfile';
 import { Loader2 } from 'lucide-react';
@@ -7,11 +7,10 @@ const Profile = () => {
     const params = useParams();
     const userId = params.id;
 
-    useGetUserProfile(userId); // Ensure this hook is fetching data correctly
+    useGetUserProfile(userId);
 
-    const { userProfile, user } = useSelector(store => store.auth);
+    const { user } = useSelector(store => store.auth);
 
-    // Handle case where user data might not be immediately available
     if (!user) {
         return (
             <p className="min-w-full min-h-[80vh] flex items-center justify-center">
@@ -27,8 +26,8 @@ const Profile = () => {
             <div className="flex flex-col items-center">
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">My Profile</h1>
                 <img src={user?.profilePicture || '/user.png'} alt="Profile Picture" className="rounded-full w-52 h-52 mx-auto" />
-                <Link to={'/account/update'}>
-                    <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white py-2 px-4 rounded mt-4">
+                <Link to={`edit`}>
+                    <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white py-2 px-4 rounded mt-4">
                         Edit Profile
                     </button>
                 </Link>
@@ -45,17 +44,17 @@ const Profile = () => {
                 </div>
                 <div className="mb-4">
                     <p className="block text-gray-700 text-2xl font-bold mb-2">Joined On:</p>
-                    <p className="text-gray-900 text-xl font-normal">{formattedDate || '-'}</p>
+                    <p className="text-gray-900 text-xl font-normal">{formattedDate || 'N/A'}</p>
                 </div>
 
                 <div className="flex space-x-4">
                     <Link to={'/history'}>
-                        <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded">
                             History
                         </button>
                     </Link>
                     <Link to={'/change-password'}>
-                        <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded">
                             Change Password
                         </button>
                     </Link>

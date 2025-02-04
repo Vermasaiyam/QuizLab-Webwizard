@@ -10,6 +10,7 @@ import QuizPage from "./components/Quiz";
 import HistoryPage from "./components/History";
 import Contact from "./components/Contact";
 import About from "./components/About";
+import EditProfile from "./components/EditProfile";
 
 const browserRouter = createBrowserRouter([
   {
@@ -28,6 +29,13 @@ const browserRouter = createBrowserRouter([
         element:
           <ProtectedRoutes>
             <Profile />
+          </ProtectedRoutes>
+      },
+      {
+        path: '/profile/:id/edit',
+        element:
+          <ProtectedRoutes>
+            <EditProfile />
           </ProtectedRoutes>
       },
       {
