@@ -26,15 +26,10 @@ const QuizPage = () => {
     }, [id]);
 
     const handleOptionSelect = (index, option) => {
-        const updatedOptions = [...selectedOptions]; // Copy the current selected options
+        const updatedOptions = [...selectedOptions];
+        updatedOptions[currentQuestionIndex] = `${option}`;
 
-        // Map index to corresponding letter (A for 0, B for 1, C for 2, etc.)
-        // const letter = String.fromCharCode(65 + index); // 65 is the ASCII code for 'A'
-
-        // Now update the selectedOptions with the letter-based format
-        updatedOptions[currentQuestionIndex] = `${option}`; // Store as A. Option, B. Option, etc.
-
-        setSelectedOptions(updatedOptions); // Update the selectedOptions array
+        setSelectedOptions(updatedOptions);
     };
 
     const handleNext = () => {
@@ -160,7 +155,7 @@ const QuizPage = () => {
 
                         {currentQuestionIndex === questions.length - 1 ? (
                             <button
-                                className="bg-green-500 text-white py-2 px-6 rounded-lg font-medium transition hover:bg-green-600"
+                                className="bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-2 px-6 rounded-lg font-medium transition hover:bg-green-600"
                                 onClick={handleSubmit}
                             >
                                 Submit
