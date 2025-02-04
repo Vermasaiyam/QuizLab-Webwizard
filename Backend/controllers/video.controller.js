@@ -64,12 +64,18 @@ export const uploadVideo = async (req, res) => {
 
 export const uploadTranscription = async (req, res) => {
     try {
-        const userId = req.id; // User ID from request
-        const { videoId, transcription } = req.body; // Destructure transcription and videoId from request body
+        const userId = req.id;
+        const { videoId, transcription, summary } = req.body;
 
         if (!transcription) {
             return res.status(400).json({
                 message: 'Transcription missing.',
+                success: false,
+            });
+        }
+        if (!summary) {
+            return res.status(400).json({
+                message: 'Summary missing.',
                 success: false,
             });
         }
@@ -80,7 +86,6 @@ export const uploadTranscription = async (req, res) => {
             });
         }
 
-        // Find the user and check if the video exists in their videos array
         const user = await User.findById(userId).select('-password').populate('videos');
         if (!user) {
             return res.status(404).json({
@@ -89,7 +94,6 @@ export const uploadTranscription = async (req, res) => {
             });
         }
 
-        // Find the video in the user's videos array
         const video = await Video.findById(videoId);
         if (!video) {
             return res.status(404).json({
@@ -98,16 +102,15 @@ export const uploadTranscription = async (req, res) => {
             });
         }
 
-        // Update the video's summary with the transcription
         video.transcription = transcription;
+        video.summary = summary;
 
-        // Save the updated video document
         await video.save();
 
         return res.status(200).json({
             message: 'Transcription updated successfully.',
             success: true,
-            video, // Return the updated video object
+            video,
         });
     } catch (error) {
         console.error(error);

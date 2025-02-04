@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import axios from 'axios';
 import { Loader2 } from "lucide-react";
 import TextCarousel from "./TextCrousel";
@@ -45,92 +46,105 @@ export default function Home() {
 
     const handleUpload = async () => {
         if (!file) {
-            alert("Please select a file.");
+            toast.error("Please select a file.");
             return;
         }
 
         try {
-            // 1. Upload the video to the Node.js backend
             setLoading(true);
             const formData = new FormData();
             formData.append("file", file);
 
-            // Send request to Node.js backend to upload the video
+            // Upload video to Node.js backend
             const uploadResponse = await axios.post(
                 "http://localhost:8000/api/video/uploadVideo",
                 formData,
                 {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                    withCredentials: true, // Send cookies with request
+                    headers: { "Content-Type": "multipart/form-data" },
+                    withCredentials: true,
                 }
             );
 
-            if (uploadResponse.data.success) {
-                const video = uploadResponse.data.video; // The uploaded video object from Node.js
-                const videoUrl = video.videoUrl;
-
-                // 2. Send the video file to the Python backend for transcription
-                const transcriptionFormData = new FormData();
-                transcriptionFormData.append("file", file); // Send the actual file here
-
-                const transcriptionResponse = await axios.post(
-                    "http://127.0.0.1:5000/transcribe",
-                    transcriptionFormData,
-                    {
-                        headers: {
-                            "Content-Type": "multipart/form-data", // This header is important for file upload
-                        },
-                    }
-                );
-
-                const transcription = transcriptionResponse.data.transcription;
-
-                if (transcription) {
-                    console.log("Transcription: ", transcription);
-
-                    // 3. Call the Node.js backend to save transcription in the database
-                    // console.log("Video ID", video._id);
-                    // console.log("Video URL", video.videoUrl);
-                    const payload = {
-                        videoId: video._id, // Use the video ID from the upload response
-                        transcription: transcription, // Transcription text from Python backend
-                    };
-
-                    // Change headers to send application/json
-                    const saveTranscriptionResponse = await axios.post(
-                        "http://localhost:8000/api/video/uploadTranscription",
-                        payload, // Send JSON data
-                        {
-                            headers: {
-                                "Content-Type": "application/json", // Use JSON content type
-                            },
-                            withCredentials: true,
-                        }
-                    );
-
-                    if (saveTranscriptionResponse.data.success) {
-                        // alert("Transcription saved successfully.");
-                        navigate(`/summary/${video._id}`);
-                    } else {
-                        alert("Failed to save transcription.");
-                    }
-                } else {
-                    alert("Failed to get transcription from Python backend.");
-                }
-
+            if (!uploadResponse.data.success) {
+                toast.error("Failed to upload video.");
                 setLoading(false);
+                return;
+            }
+
+            const video = uploadResponse.data.video;
+            const videoUrl = video.videoUrl;
+
+            // Send video file to Python backend for transcription
+            const transcriptionFormData = new FormData();
+            transcriptionFormData.append("file", file);
+
+            const transcriptionResponse = await axios.post(
+                "http://127.0.0.1:5000/transcribe",
+                transcriptionFormData,
+                {
+                    headers: { "Content-Type": "multipart/form-data" },
+                }
+            );
+
+            const transcription = transcriptionResponse.data.transcription;
+
+            if (!transcription) {
+                toast.error("Failed to get transcription.");
+                setLoading(false);
+                return;
+            }
+
+            console.log("Transcription: ", transcription);
+
+            // Request summary from Python backend
+            const response = await axios.post(
+                "http://127.0.0.1:5000/modify",
+                {
+                    modification_input: "give me summary of the transcribed text.",
+                    transcription: transcription,
+                },
+                { headers: { "Content-Type": "application/json" } }
+            );
+
+            const summaryText = response.data.modified_text;
+
+            if (!summaryText) {
+                toast.error("Failed to get summary from Python backend.");
+                setLoading(false);
+                return;
+            }
+
+            console.log("Summary: ", summaryText);
+
+            // Save transcription and summary in the database
+            const payload = {
+                videoId: video._id,
+                transcription: transcription,
+                summary: summaryText,
+            };
+
+            const saveTranscriptionResponse = await axios.post(
+                "http://localhost:8000/api/video/uploadTranscription",
+                payload,
+                {
+                    headers: { "Content-Type": "application/json" },
+                    withCredentials: true,
+                }
+            );
+
+            if (saveTranscriptionResponse.data.success) {
+                navigate(`/summary/${video._id}`);
             } else {
-                alert("Failed to upload video.");
+                toast.error("Failed to save transcription.");
             }
         } catch (error) {
             console.error("Error during file upload and processing:", error);
-            alert(error);
+            toast.error("An error occurred.");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
         <div className="bg-[#0B1930] min-h-[90vh] flex flex-col items-center justify-center text-white p-4">
