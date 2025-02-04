@@ -33,6 +33,13 @@ export default function Header() {
     }
   };
 
+  const navItems = [
+    { name: "Home", path: "/" },
+    { name: "History", path: "/history" },
+    { name: "About", path: "/about" },
+    { name: "Contact", path: "/contact" },
+  ];
+
   return (
     <header className="bg-gray-800 px-6 text-white shadow-md z-10">
       <div className="container mx-auto flex justify-between items-center">
@@ -51,24 +58,16 @@ export default function Header() {
 
         {/* Navbar - Desktop */}
         <nav className="hidden md:flex items-center space-x-6">
-          {["Home", "History", "About", "Contact"].map((item) => {
-            const path = `${item.toLowerCase() === "home" ? "/" : item.toLowerCase()
-              }`;
+          {navItems.map(({ name, path }) => {
             const isActive = location.pathname === path;
             return (
               <Link
-                key={item}
+                key={name}
                 to={path}
-                className={`relative text-lg transition-all duration-300 ${isActive
-                    ? "font-bold text-white"
-                    : "text-gray-300 hover:text-white"
+                className={`relative text-lg transition-all duration-300 ${isActive ? "font-bold text-white" : "text-gray-300 hover:text-white"
                   }`}
               >
-                {item}
-                <span
-                  className={`absolute left-0 bottom-0 h-1 bg-white transition-all duration-300 ${isActive ? "w-full" : "w-0 hover:w-full"
-                    }`}
-                />
+                {name}
               </Link>
             );
           })}
@@ -123,21 +122,17 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden absolute top-16 left-0 w-full bg-gray-900 shadow-lg z-10">
           <nav className="flex flex-col items-center space-y-4 py-4">
-            {["Home", "History", "About", "Contact"].map((item) => {
-              const path = `${item.toLowerCase() === "home" ? "/" : item.toLowerCase()
-                }`;
+            {navItems.map(({ name, path }) => {
               const isActive = location.pathname === path;
               return (
                 <Link
-                  key={item}
+                  key={name}
                   to={path}
-                  className={`text-lg transition-all duration-300 ${isActive
-                      ? "font-bold text-white"
-                      : "text-gray-300 hover:text-white"
+                  className={`text-lg transition-all duration-300 ${isActive ? "font-bold text-white" : "text-gray-300 hover:text-white"
                     }`}
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  {item}
+                  {name}
                 </Link>
               );
             })}
