@@ -101,10 +101,10 @@ const SummaryPage = () => {
 
     return (
         <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-[80vh] shadow-md rounded-lg">
-            <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">📹 Video Summary</h1>
+            <h1 className="md:text-4xl text-2xl font-bold text-center text-gray-900 mb-8">📹 Video Summary</h1>
 
             <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-2xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
+                <h2 className="md:text-2xl text-xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
 
                 {/* Transcription Section */}
                 <div className="mb-6">
