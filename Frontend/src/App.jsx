@@ -11,6 +11,7 @@ import HistoryPage from "./components/History";
 import Contact from "./components/Contact";
 import About from "./components/About";
 import EditProfile from "./components/EditProfile";
+import ChangePassword from "./components/ChangePassword";
 
 const browserRouter = createBrowserRouter([
   {
@@ -36,6 +37,13 @@ const browserRouter = createBrowserRouter([
         element:
           <ProtectedRoutes>
             <EditProfile />
+          </ProtectedRoutes>
+      },
+      {
+        path: '/profile/:id/change-password',
+        element:
+          <ProtectedRoutes>
+            <ChangePassword />
           </ProtectedRoutes>
       },
       {

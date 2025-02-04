@@ -53,7 +53,7 @@ const Profile = () => {
                             History
                         </button>
                     </Link>
-                    <Link to={'/change-password'}>
+                    <Link to={'change-password'}>
                         <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded">
                             Change Password
                         </button>
