@@ -156,9 +156,6 @@ export default function Home() {
                 </div>
 
                 <div>
-                    {/* <button className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 hover:bg-blue-700">
-                        Get your Quiz/Summary for free →
-                    </button> */}
                     <button
                         className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 hover:bg-blue-700"
                         onClick={handleUpload}
