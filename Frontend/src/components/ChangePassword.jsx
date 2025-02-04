@@ -3,11 +3,17 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 export default function ChangePassword() {
     const { user } = useSelector(store => store.auth);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState({
+        oldPassword: false,
+        newPassword: false,
+        confirmPassword: false
+    });
     const [passwordData, setPasswordData] = useState({
         oldPassword: "",
         newPassword: "",
@@ -16,6 +22,10 @@ export default function ChangePassword() {
 
     const handleChange = (key, value) => {
         setPasswordData(prev => ({ ...prev, [key]: value }));
+    };
+
+    const togglePasswordVisibility = (field) => {
+        setShowPassword(prev => ({ ...prev, [field]: !prev[field] }));
     };
 
     const handleSubmit = async () => {
@@ -48,39 +58,34 @@ export default function ChangePassword() {
                 onSubmit={(e) => e.preventDefault()}
                 className="flex flex-col gap-4 max-w-2xl mx-auto"
             >
-                <div className="mb-2">
-                    <label className="block text-gray-700 font-bold mb-2">Old Password</label>
-                    <input
-                        type="password"
-                        value={passwordData.oldPassword}
-                        onChange={(e) => handleChange("oldPassword", e.target.value)}
-                        className="rounded w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100"
-                    />
-                </div>
-                <div className="mb-2">
-                    <label className="block text-gray-700 font-bold mb-2">New Password</label>
-                    <input
-                        type="password"
-                        value={passwordData.newPassword}
-                        onChange={(e) => handleChange("newPassword", e.target.value)}
-                        className="rounded w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100"
-                    />
-                </div>
-                <div className="mb-2">
-                    <label className="block text-gray-700 font-bold mb-2">Confirm Password</label>
-                    <input
-                        type="password"
-                        value={passwordData.confirmPassword}
-                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
-                        className="rounded w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100"
-                    />
-                </div>
+                {['oldPassword', 'newPassword', 'confirmPassword'].map((field, index) => (
+                    <div className="mb-2" key={index}>
+                        <label className="block text-gray-700 font-bold mb-2">
+                            {field === 'oldPassword' ? 'Old Password' : field === 'newPassword' ? 'New Password' : 'Confirm Password'}
+                        </label>
+                        <div className="relative flex items-center">
+                            <input
+                                type={showPassword[field] ? "text" : "password"}
+                                value={passwordData[field]}
+                                onChange={(e) => handleChange(field, e.target.value)}
+                                className="rounded w-full py-2 px-3 text-gray-700 leading-tight focus:shadow-outline bg-gray-100 pr-12"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => togglePasswordVisibility(field)}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer"
+                            >
+                                {showPassword[field] ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+                            </button>
+                        </div>
+                    </div>
+                ))}
                 <div>
                     <button
                         disabled={isLoading}
                         type="submit"
                         onClick={handleSubmit}
-                        className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none cursor-pointer focus:shadow-outline"
                     >
                         {isLoading ? "Changing Password..." : "Change Password"}
                     </button>
