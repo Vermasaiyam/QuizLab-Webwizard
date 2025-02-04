@@ -106,7 +106,6 @@ const SummaryPage = () => {
             <div className="bg-white p-6 rounded-lg shadow-sm">
                 <h2 className="md:text-2xl text-xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
 
-                {/* Transcription Section */}
                 <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-700 border-b-2 pb-2 mb-2">
                         🎤 Transcribed Text
@@ -114,7 +113,6 @@ const SummaryPage = () => {
                     <p className="text-gray-600 text-base whitespace-pre-line">{videoDetails.transcription}</p>
                 </div>
 
-                {/* Summary Section */}
                 <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-700 border-b-2 pb-2 mb-2">
                         📝 Summary
@@ -122,7 +120,6 @@ const SummaryPage = () => {
                     <p className="text-gray-700 text-lg">{videoDetails.summary}</p>
                 </div>
 
-                {/* Quiz Button */}
                 <button
                     className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300 cursor-pointer"
                     onClick={handleGenerateQuiz}
