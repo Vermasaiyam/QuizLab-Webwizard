@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify
 import os
 import whisper
-import requests
+import yt_dlp
 from groq import Groq
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,9 +11,6 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-
-# Load Whisper model
-
 
 # Load the base Whisper model
 model = whisper.load_model("base")
@@ -42,6 +39,38 @@ def authenticate_google_docs():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+
+@app.route('/download-audio', methods=['POST'])
+def download_audio():
+    try:
+        url = request.json.get('url')
+
+        if not url:
+            return jsonify({'error': 'No URL provided'}), 400
+
+        # Set up yt-dlp options to extract audio
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessors': [{
+                'key': 'FFmpegAudioConvertor',  # Corrected key
+                'preferredcodec': 'mp3',  # You can choose any format you like
+                'preferredquality': '192',
+            }],
+            'outtmpl': 'downloads/%(id)s.%(ext)s',  # Save audio to "downloads" directory
+        }
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info_dict = ydl.extract_info(url, download=True)
+            file_name = ydl.prepare_filename(info_dict)
+            file_path = os.path.join('downloads', file_name.replace('.webm', '.mp3'))
+
+        return jsonify({'audioFile': file_path})  # Return path to the downloaded audio file
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe():

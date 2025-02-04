@@ -9,6 +9,8 @@ export default function Home() {
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [inputType, setInputType] = useState("file"); // State to control the dropdown selection
+    const [youTubeUrl, setYouTubeUrl] = useState("");
 
     const loadingTexts = [
         "Loading file...",
@@ -39,112 +41,188 @@ export default function Home() {
         }
     }, [loading]);
 
-
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
     };
 
     const handleUpload = async () => {
-        if (!file) {
-            toast.error("Please select a file.");
+        if (inputType === "youtube" && !youTubeUrl) {
+            toast.error("Please provide a YouTube URL.");
             return;
         }
 
+        setLoading(true);
+
         try {
-            setLoading(true);
-            const formData = new FormData();
-            formData.append("file", file);
+            if (inputType === "youtube") {
+                // Handle YouTube URL processing
+                const response = await axios.post("http://localhost:5000/download-audio", {
+                    url: youTubeUrl,
+                });
 
-            // Upload video to Node.js backend
-            const uploadResponse = await axios.post(
-                "http://localhost:8000/api/video/uploadVideo",
-                formData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
-                    withCredentials: true,
+                console.log("Response from backend:", response);  // Log the response
+
+                if (response.data.audioFile) {
+                    console.log("Audio file path:", response.data.audioFile);
                 }
-            );
 
-            if (!uploadResponse.data.success) {
-                toast.error("Failed to upload video.");
-                setLoading(false);
-                return;
-            }
+                const audioFile = response.data.audioFile; // Assuming backend returns the audio file path
 
-            const video = uploadResponse.data.video;
-            const videoUrl = video.videoUrl;
+                // Send audio file to Python backend for transcription
+                const transcriptionResponse = await axios.post(
+                    "http://127.0.0.1:5000/transcribe",
+                    { file: audioFile },
+                    { headers: { "Content-Type": "application/json" } }
+                );
 
-            // Send video file to Python backend for transcription
-            const transcriptionFormData = new FormData();
-            transcriptionFormData.append("file", file);
+                const transcription = transcriptionResponse.data.transcription;
 
-            const transcriptionResponse = await axios.post(
-                "http://127.0.0.1:5000/transcribe",
-                transcriptionFormData,
-                {
-                    headers: { "Content-Type": "multipart/form-data" },
+                if (!transcription) {
+                    toast.error("Failed to get transcription.");
+                    setLoading(false);
+                    return;
                 }
-            );
 
-            const transcription = transcriptionResponse.data.transcription;
+                console.log("Transcription: ", transcription);
 
-            if (!transcription) {
-                toast.error("Failed to get transcription.");
-                setLoading(false);
-                return;
-            }
+                // Request summary from Python backend
+                const summaryResponse = await axios.post(
+                    "http://127.0.0.1:5000/modify",
+                    {
+                        modification_input: "give me summary of the transcribed text.",
+                        transcription: transcription,
+                    },
+                    { headers: { "Content-Type": "application/json" } }
+                );
 
-            console.log("Transcription: ", transcription);
+                const summaryText = summaryResponse.data.modified_text;
 
-            // Request summary from Python backend
-            const response = await axios.post(
-                "http://127.0.0.1:5000/modify",
-                {
-                    modification_input: "give me summary of the transcribed text.",
+                if (!summaryText) {
+                    toast.error("Failed to get summary from Python backend.");
+                    setLoading(false);
+                    return;
+                }
+
+                console.log("Summary: ", summaryText);
+
+                // Save transcription and summary in the database
+                const videoData = {
+                    videoId: "youtube_video_id", // Replace with actual YouTube video ID or custom ID if needed
                     transcription: transcription,
-                },
-                { headers: { "Content-Type": "application/json" } }
-            );
+                    summary: summaryText,
+                };
 
-            const summaryText = response.data.modified_text;
+                const saveTranscriptionResponse = await axios.post(
+                    "http://localhost:8000/api/video/uploadTranscription",
+                    videoData,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
 
-            if (!summaryText) {
-                toast.error("Failed to get summary from Python backend.");
-                setLoading(false);
-                return;
-            }
-
-            console.log("Summary: ", summaryText);
-
-            // Save transcription and summary in the database
-            const payload = {
-                videoId: video._id,
-                transcription: transcription,
-                summary: summaryText,
-            };
-
-            const saveTranscriptionResponse = await axios.post(
-                "http://localhost:8000/api/video/uploadTranscription",
-                payload,
-                {
-                    headers: { "Content-Type": "application/json" },
-                    withCredentials: true,
+                if (saveTranscriptionResponse.data.success) {
+                    navigate(`/summary/${videoData.videoId}`);
+                } else {
+                    toast.error("Failed to save transcription.");
                 }
-            );
 
-            if (saveTranscriptionResponse.data.success) {
-                navigate(`/summary/${video._id}`);
             } else {
-                toast.error("Failed to save transcription.");
+                // File upload logic (for audio/video files)
+                const formData = new FormData();
+                formData.append("file", file);
+
+                // Upload video to Node.js backend
+                const uploadResponse = await axios.post(
+                    "http://localhost:8000/api/video/uploadVideo",
+                    formData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                        withCredentials: true,
+                    }
+                );
+
+                if (!uploadResponse.data.success) {
+                    toast.error("Failed to upload video.");
+                    setLoading(false);
+                    return;
+                }
+
+                const video = uploadResponse.data.video;
+                const videoUrl = video.videoUrl;
+
+                // Send video file to Python backend for transcription
+                const transcriptionFormData = new FormData();
+                transcriptionFormData.append("file", file);
+
+                const transcriptionResponse = await axios.post(
+                    "http://127.0.0.1:5000/transcribe",
+                    transcriptionFormData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    }
+                );
+
+                const transcription = transcriptionResponse.data.transcription;
+
+                if (!transcription) {
+                    toast.error("Failed to get transcription.");
+                    setLoading(false);
+                    return;
+                }
+
+                console.log("Transcription: ", transcription);
+
+                // Request summary from Python backend
+                const summaryResponse = await axios.post(
+                    "http://127.0.0.1:5000/modify",
+                    {
+                        modification_input: "give me summary of the transcribed text.",
+                        transcription: transcription,
+                    },
+                    { headers: { "Content-Type": "application/json" } }
+                );
+
+                const summaryText = summaryResponse.data.modified_text;
+
+                if (!summaryText) {
+                    toast.error("Failed to get summary from Python backend.");
+                    setLoading(false);
+                    return;
+                }
+
+                console.log("Summary: ", summaryText);
+
+                // Save transcription and summary in the database
+                const payload = {
+                    videoId: video._id,
+                    transcription: transcription,
+                    summary: summaryText,
+                };
+
+                const saveTranscriptionResponse = await axios.post(
+                    "http://localhost:8000/api/video/uploadTranscription",
+                    payload,
+                    {
+                        headers: { "Content-Type": "application/json" },
+                        withCredentials: true,
+                    }
+                );
+
+                if (saveTranscriptionResponse.data.success) {
+                    navigate(`/summary/${video._id}`);
+                } else {
+                    toast.error("Failed to save transcription.");
+                }
             }
+
         } catch (error) {
-            console.error("Error during file upload and processing:", error);
+            console.error("Error during upload:", error);
             toast.error("An error occurred.");
         } finally {
             setLoading(false);
         }
     };
-
 
     return (
         <div className="bg-[#0B1930] min-h-[90vh] flex flex-col items-center justify-center text-white p-4">
@@ -158,16 +236,41 @@ export default function Home() {
                 <h2 className="text-md font-bold">Turn YouTube videos or audio into quizzes and summaries.</h2>
                 <p className="text-gray-500 text-sm">No credit card required.</p>
 
-                {/* Input Box */}
-                <div className="py-4 bg-white rounded-lg shadow-md">
-                    <label className="block text-lg font-semibold text-gray-800 mb-2">Upload Audio/Video here:</label>
-                    <input
-                        type="file"
-                        accept="audio/*,video/*"
-                        className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200"
-                        onChange={handleFileChange}
-                    />
+                <div className="flex items-center mb-4">
+                    <label htmlFor="inputType" className="mr-2 text-gray-700">Select Input Type:</label>
+                    <select
+                        id="inputType"
+                        value={inputType}
+                        onChange={(e) => setInputType(e.target.value)}
+                        className="p-2 rounded-lg"
+                    >
+                        <option value="file">Upload Audio/Video</option>
+                        <option value="youtube">Provide YouTube URL</option>
+                    </select>
                 </div>
+
+                {/* Conditional input fields */}
+                {inputType === "youtube" ? (
+                    <div className="py-4 bg-white rounded-lg shadow-md">
+                        <label className="block text-lg font-semibold text-gray-800 mb-2">Enter YouTube URL:</label>
+                        <input
+                            type="text"
+                            placeholder="Paste YouTube URL"
+                            className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200"
+                            onChange={(e) => setYouTubeUrl(e.target.value)} // Add state for URL
+                        />
+                    </div>
+                ) : (
+                    <div className="py-4 bg-white rounded-lg shadow-md">
+                        <label className="block text-lg font-semibold text-gray-800 mb-2">Upload Audio/Video here:</label>
+                        <input
+                            type="file"
+                            accept="audio/*,video/*"
+                            className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200"
+                            onChange={handleFileChange}
+                        />
+                    </div>
+                )}
 
                 <div>
                     <button
