@@ -19,7 +19,7 @@ const Profile = () => {
         );
     }
 
-    const formattedDate = user?.timestampCreate ? user.timestampCreate.toDate().toLocaleDateString() : '';
+    const formattedDate = user?.createdAt ? user.createdAt.toDate().toLocaleDateString() : '';
 
     return (
         <div className="min-h-[70vh] w-full items-center grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4">

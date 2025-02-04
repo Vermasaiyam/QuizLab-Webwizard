@@ -157,8 +157,8 @@ export const editProfile = async (req, res) => {
         const userId = req.id;
         const { username } = req.body;
         const profilePicture = req.file;
-        let cloudResponse;
 
+        let cloudResponse;
         if (profilePicture) {
             const fileUri = getDataUri(profilePicture);
             cloudResponse = await cloudinary.uploader.upload(fileUri);
@@ -171,8 +171,9 @@ export const editProfile = async (req, res) => {
                 success: false
             });
         };
+
         if (username) user.username = username;
-        if (profilePicture) user.profilePicture = cloudResponse.secure_url;
+        if (cloudResponse) user.profilePicture = cloudResponse.secure_url;
 
         await user.save();
 
@@ -184,6 +185,7 @@ export const editProfile = async (req, res) => {
 
     } catch (error) {
         console.log(error);
+        res.status(500).json({ message: "Internal Server Error", success: false });
     }
 };
 

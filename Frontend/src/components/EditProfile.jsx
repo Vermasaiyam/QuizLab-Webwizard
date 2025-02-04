@@ -25,9 +25,10 @@ export default function EditProfile() {
     const handleProfilePictureChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = () => setProfilePicture(reader.result);
-            reader.readAsDataURL(file);
+            setProfilePicture(file);
+
+            const imageUrl = URL.createObjectURL(file);
+            setData(prev => ({ ...prev, profilePicture: imageUrl }));
         }
     };
 
@@ -36,23 +37,24 @@ export default function EditProfile() {
         const formData = new FormData();
         formData.append("username", data.username);
         formData.append("email", data.email);
-        if (data.profilePicture) {
-            formData.append("profilePicture", data.profilePicture);
+        if (profilePicture) {
+            formData.append("profilePicture", profilePicture); // Append actual file
         }
 
         try {
             const res = await axios.post('http://localhost:8000/api/user/profile/edit', formData, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'multipart/form-data' // Ensure multipart/form-data is used
                 },
                 withCredentials: true,
-            })
+            });
+
             if (res.data.success) {
                 const updatedUserData = {
                     ...user,
                     username: res.data.user?.username,
                     email: res.data.user?.email,
-                    profilePicture: res.data.user?.profilePicture,
+                    profilePicture: res.data.user?.profilePicture, // Ensure updated picture is stored
                 };
                 dispatch(setAuthUser(updatedUserData));
                 navigate(`/profile/${user?._id}`);
@@ -60,7 +62,7 @@ export default function EditProfile() {
             }
             setIsLoading(false);
         } catch (error) {
-            toast.error(error.message || "An error occurred while changing the password.");
+            toast.error(error.message || "An error occurred while updating the profile.");
         } finally {
             setIsLoading(false);
         }
@@ -69,13 +71,14 @@ export default function EditProfile() {
     return (
         <div className="container mx-auto p-4 min-h-[70vh] mt-8">
             <h1 className="text-2xl font-bold mb-4 text-center">Edit Profile</h1>
-            <div>
-                <div className="flex flex-col items-center gap-3">
-                    <label className="relative cursor-pointer">
-                        <img src={profilePicture || "/user.png"} alt="Profile" className="w-24 h-24 rounded-full object-cover border" />
-                        <input type="file" accept="image/*" className="hidden" onChange={handleProfilePictureChange} />
-                    </label>
-                </div>
+            <div className="flex flex-col items-center gap-3">
+                <label className="relative cursor-pointer">
+                    <img src={data.profilePicture || profilePicture || "/user.png"}
+                        alt="Profile"
+                        className="w-24 h-24 rounded-full object-cover border"
+                    />
+                    <input type="file" accept="image/*" className="hidden" onChange={handleProfilePictureChange} />
+                </label>
             </div>
             <form
                 onSubmit={(e) => {
