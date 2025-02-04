@@ -13,14 +13,14 @@ export default function Contact() {
             <div className="flex flex-col items-center justify-center space-y-4 w-80">
                 <a
                     to="tel:+91-7251859585"
-                    className="w-full bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
+                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
                 >
                     <FaPhoneAlt />
                     +91 7251859585
                 </a>
                 <a
                     to="mailto:vermasaiyam9@gmail.com@gmail.com"
-                    className="w-full bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
+                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
                 >
                     <MdEmail />
                     vermasaiyam9@gmail.com
@@ -29,7 +29,7 @@ export default function Contact() {
                     to="https://www.google.com/maps/place/Meerut,+India/@28.994939,77.699936,12z/data=!4m5!3m4!1s0x390d05f37a740361:0x19984d696c61640c!8m2!3d28.994939!4d77.699936"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full bg-red-400 hover:bg-red-500 text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
+                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white font-bold py-3 px-4 rounded focus:outline-none focus:shadow-outline flex gap-2 items-center"
                 >
                     <FaLocationDot />
                     Meerut, Uttar Pradesh, India
