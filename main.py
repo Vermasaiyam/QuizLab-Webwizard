@@ -40,7 +40,6 @@ def authenticate_google_docs():
 def index():
     return render_template('index.html')
 
-
 @app.route('/download-audio', methods=['POST'])
 def download_audio():
     try:
@@ -49,13 +48,13 @@ def download_audio():
         if not url:
             return jsonify({'error': 'No URL provided'}), 400
 
-        # Set up yt-dlp options to extract audio
+        # Set up yt-dlp options to extract audio and convert to MP3
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
-                'key': 'FFmpegAudioConvertor',  # Corrected key
-                'preferredcodec': 'mp3',  # You can choose any format you like
-                'preferredquality': '192',
+                'key': 'FFmpegAudioConvertor',  # Corrected key for FFmpeg audio conversion
+                'preferredcodec': 'mp3',  # Output audio format
+                'preferredquality': '192',  # Audio quality
             }],
             'outtmpl': 'downloads/%(id)s.%(ext)s',  # Save audio to "downloads" directory
         }
@@ -69,7 +68,6 @@ def download_audio():
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-    
 
 
 @app.route('/transcribe', methods=['POST'])
