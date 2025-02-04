@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Loader2 } from 'lucide-react';
-import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAuthUser } from '../redux/authSlice.js';
+import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 const Login = () => {
     const [show, setShow] = useState(false);
@@ -51,7 +51,7 @@ const Login = () => {
         } catch (error) {
             console.log(error);
             toast.error(error.response.data.message);
-        } finally{
+        } finally {
             setLoading(false);
         }
 
@@ -94,13 +94,14 @@ const Login = () => {
                             className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10 transition-all"
                         />
                         <button
-                            className="absolute inset-y-0 right-0 flex items-center px-3 bg-slate-100 focus:outline-none cursor-pointer"
+                            type="button"
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleClick();
                             }}
+                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer"
                         >
-                            {show ? <FaEyeSlash /> : <FaEye />}
+                            {show ? <FiEyeOff size={20} /> : <FiEye size={20} />}
                         </button>
                     </div>
                 </div>
