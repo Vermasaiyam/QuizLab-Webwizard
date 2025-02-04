@@ -141,7 +141,6 @@ const QuizPage = () => {
                         </div>
                     )}
 
-                    {/* Navigation Buttons */}
                     <div className="flex justify-between mt-8">
                         <button
                             className="bg-gray-300 text-gray-700 py-2 px-5 rounded-lg font-medium transition hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -181,10 +180,8 @@ const QuizPage = () => {
                     </div>
 
                     <div className="mt-8">
-                        {/* Heading for correct answers */}
                         <h3 className="text-xl font-semibold text-gray-800 mb-4">Correct Answers:</h3>
 
-                        {/* List of questions and answers */}
                         <ul className="list-disc list-inside text-lg text-gray-800">
                             {questions.map((question, index) => (
                                 <li key={index} className="flex flex-col space-y-2 mb-4">
@@ -192,12 +189,11 @@ const QuizPage = () => {
                                         <strong className="text-lg text-gray-900">Q{index + 1}:</strong>
                                         <span className="flex-1 text-gray-700">{selectedOptions[index] || "No Answer Selected"}</span>
                                     </div>
-                                    {/* Display Correct Answer */}
+                                    
                                     <div className="text-sm text-gray-600">
                                         <strong className="text-gray-900">Correct Answer:</strong> {question.correctAns[0]}
                                     </div>
 
-                                    {/* Result based on user answer */}
                                     {selectedOptions[index] === question.correctAns[0] ? (
                                         <span className="text-green-500 font-medium">✔️ Correct</span>
                                     ) : (
