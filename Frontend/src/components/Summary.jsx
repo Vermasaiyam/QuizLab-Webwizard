@@ -100,17 +100,34 @@ const SummaryPage = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-[80vh]">
-            <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Video Summary</h1>
-            <div>
+        <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-[80vh] shadow-md rounded-lg">
+            <h1 className="text-4xl font-bold text-center text-gray-900 mb-8">📹 Video Summary</h1>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm">
                 <h2 className="text-2xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
-                <p className="text-gray-700 text-lg mb-4">{videoDetails.summary}</p>
-                <p className="text-gray-600 text-base mb-6">{videoDetails.transcription}</p>
+
+                {/* Transcription Section */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-700 border-b-2 pb-2 mb-2">
+                        🎤 Transcribed Text
+                    </h3>
+                    <p className="text-gray-600 text-base whitespace-pre-line">{videoDetails.transcription}</p>
+                </div>
+
+                {/* Summary Section */}
+                <div className="mb-6">
+                    <h3 className="text-lg font-semibold text-gray-700 border-b-2 pb-2 mb-2">
+                        📝 Summary
+                    </h3>
+                    <p className="text-gray-700 text-lg">{videoDetails.summary}</p>
+                </div>
+
+                {/* Quiz Button */}
                 <button
-                    className="bg-green-500 text-white py-3 px-6 text-lg font-semibold rounded-md hover:bg-green-600 transition duration-300"
+                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300"
                     onClick={handleGenerateQuiz}
                 >
-                    Generate Quiz
+                    🎯 Generate Quiz
                 </button>
             </div>
         </div>
