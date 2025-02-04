@@ -233,23 +233,21 @@ export default function Home() {
 
             {/* Input Box Section */}
             <div className="bg-white text-gray-900 w-full max-w-xl mt-6 p-6 rounded-2xl shadow-lg">
-                <h2 className="text-md font-bold">Turn YouTube videos or audio into quizzes and summaries.</h2>
-                <p className="text-gray-500 text-sm">No credit card required.</p>
+                <h2 className="text-md font-bold mb-4">Turn YouTube videos or audio into quizzes and summaries.</h2>
 
-                <div className="flex items-center mb-4">
-                    <label htmlFor="inputType" className="mr-2 text-gray-700">Select Input Type:</label>
+                <div className="flex items-center mb-1 md:space-x-4 space-x-2">
+                    <label htmlFor="inputType" className="md:text-lg text-sm font-semibold text-gray-800">Select Input Type:</label>
                     <select
                         id="inputType"
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
-                        className="p-2 rounded-lg"
+                        className="md:p-2 p-1 bg-white border-2 border-gray-300 md:text-base text-sm rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out"
                     >
                         <option value="file">Upload Audio/Video</option>
                         <option value="youtube">Provide YouTube URL</option>
                     </select>
                 </div>
 
-                {/* Conditional input fields */}
                 {inputType === "youtube" ? (
                     <div className="py-4 bg-white rounded-lg shadow-md">
                         <label className="block text-lg font-semibold text-gray-800 mb-2">Enter YouTube URL:</label>
@@ -261,14 +259,19 @@ export default function Home() {
                         />
                     </div>
                 ) : (
-                    <div className="py-4 bg-white rounded-lg shadow-md">
-                        <label className="block text-lg font-semibold text-gray-800 mb-2">Upload Audio/Video here:</label>
-                        <input
-                            type="file"
-                            accept="audio/*,video/*"
-                            className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200"
-                            onChange={handleFileChange}
-                        />
+                    <div className="py-6 bg-white rounded-lg shadow-lg">
+                        <label className="block text-lg font-semibold text-gray-800 mb-3">Upload Audio/Video here:</label>
+                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 space-y-4 hover:border-indigo-500 hover:bg-gray-50 transition duration-300">
+                            <input
+                                type="file"
+                                accept="audio/*,video/*"
+                                className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200 file:hidden"
+                                onChange={handleFileChange}
+                            />
+                            <div className="text-gray-500 text-sm">
+                                <p>Click to upload or drag and drop files here</p>
+                            </div>
+                        </div>
                     </div>
                 )}
 
