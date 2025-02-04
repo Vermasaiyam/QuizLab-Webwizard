@@ -9,6 +9,7 @@ import SummaryPage from "./components/Summary";
 import QuizPage from "./components/Quiz";
 import HistoryPage from "./components/History";
 import Contact from "./components/Contact";
+import About from "./components/About";
 
 const browserRouter = createBrowserRouter([
   {
@@ -55,6 +56,13 @@ const browserRouter = createBrowserRouter([
         element:
           <ProtectedRoutes>
             <Contact />
+          </ProtectedRoutes>
+      },
+      {
+        path: '/about',
+        element:
+          <ProtectedRoutes>
+            <About />
           </ProtectedRoutes>
       },
     ]
