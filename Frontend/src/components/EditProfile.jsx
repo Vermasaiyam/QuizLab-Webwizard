@@ -2,6 +2,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { setAuthUser } from "../redux/authSlice";
 
 export default function EditProfile() {
     const { user } = useSelector(store => store.auth);
@@ -39,7 +41,7 @@ export default function EditProfile() {
         }
 
         try {
-            const res = await axios.post('http://localhost:8000/api/user/edit', formData, {
+            const res = await axios.post('http://localhost:8000/api/user/profile/edit', formData, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
