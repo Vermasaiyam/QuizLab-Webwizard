@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
+import 'react-circular-progressbar/dist/styles.css';
+import { CircularProgressbar } from 'react-circular-progressbar';
 
 const HistoryPage = () => {
     const navigate = useNavigate();
@@ -60,30 +62,27 @@ const HistoryPage = () => {
 
     const getCircleScore = () => {
         const percentage = (selectedVideo.score / selectedVideo.questions.length) * 100;
+
         return (
-            <div className="relative flex items-center justify-center">
-                <svg width="100" height="100" className="rotate-90">
-                    <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        stroke="#e6e6e6"
-                        strokeWidth="10"
-                        fill="none"
-                    />
-                    <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        stroke="#4CAF50"
-                        strokeWidth="10"
-                        fill="none"
-                        strokeDasharray={`${(percentage / 100) * (2 * Math.PI * 45)} ${2 * Math.PI * 45}`}
-                        strokeDashoffset={(2 * Math.PI * 45) * (1 - percentage / 100)}
-                        transform="rotate(-90 50 50)"
-                    />
-                </svg>
-                <div className="absolute text-xl font-semibold">{selectedVideo.score}/{selectedVideo.questions.length}</div>
+            <div className="relative flex items-center justify-center" style={{ width: '100px', height: '100px' }}>
+                <CircularProgressbar
+                    value={percentage}
+                    text={`${selectedVideo.score}/${selectedVideo.questions.length}`}
+                    strokeWidth={10}
+                    styles={{
+                        path: {
+                            stroke: '#4CAF50',
+                            strokeLinecap: 'round',
+                        },
+                        trail: {
+                            stroke: '#e6e6e6',
+                        },
+                        text: {
+                            fill: '#000',
+                            fontSize: '20px',
+                        },
+                    }}
+                />
             </div>
         );
     };
@@ -109,7 +108,7 @@ const HistoryPage = () => {
     const handleGenerateQuiz = async () => {
         try {
             setLoading(true);
-            
+
             await fetchVideoDetails();
 
             const transcription = videoDetails.transcription;

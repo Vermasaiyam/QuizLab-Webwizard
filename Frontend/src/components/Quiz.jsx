@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
+import 'react-circular-progressbar/dist/styles.css';
+import { CircularProgressbar } from 'react-circular-progressbar';
 
 const QuizPage = () => {
     const { id } = useParams(); // The videoId
@@ -74,33 +76,29 @@ const QuizPage = () => {
 
     const currentQuestion = questions[currentQuestionIndex];
 
-    // Function to generate circular progress
     const getCircleScore = () => {
         const percentage = (score / questions.length) * 100;
+
         return (
-            <div className="relative flex items-center justify-center">
-                <svg width="100" height="100" className="rotate-90">
-                    <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        stroke="#e6e6e6"
-                        strokeWidth="10"
-                        fill="none"
-                    />
-                    <circle
-                        cx="50"
-                        cy="50"
-                        r="45"
-                        stroke="#4CAF50"
-                        strokeWidth="10"
-                        fill="none"
-                        strokeDasharray={`${(percentage / 100) * (2 * Math.PI * 45)} ${2 * Math.PI * 45}`} // Update this line for proper calculation
-                        strokeDashoffset={(2 * Math.PI * 45) * (1 - percentage / 100)} // This ensures it starts from top (0 degrees)
-                        transform="rotate(-90 50 50)"
-                    />
-                </svg>
-                <div className="absolute text-xl font-semibold">{score}/{questions.length}</div>
+            <div className=" flex items-center justify-center" style={{ width: '100px', height: '100px' }}>
+                <CircularProgressbar
+                    value={percentage}
+                    text={`${score}/${questions.length}`}
+                    strokeWidth={10}
+                    styles={{
+                        path: {
+                            stroke: '#4CAF50',
+                            strokeLinecap: 'round',
+                        },
+                        trail: {
+                            stroke: '#e6e6e6',
+                        },
+                        text: {
+                            fill: '#000',
+                            fontSize: '20px',
+                        },
+                    }}
+                />
             </div>
         );
     };
@@ -172,23 +170,45 @@ const QuizPage = () => {
                 </div>
 
             ) : (
-                <div className="text-center">
-                    <h2 className="text-2xl font-bold">Quiz Completed!</h2>
-                    <p className="text-lg mt-4">Your Score:</p>
-                    <div className="mt-4">{getCircleScore()}</div>
-                    <ul className="list-disc list-inside mt-4">
-                        {questions.map((question, index) => (
-                            <li key={index}>
-                                <strong>Q{index + 1}:</strong> {selectedOptions[index] || "No Answer Selected"}{" "}
-                                {selectedOptions[index] === question.correctAns[0] ? (
-                                    <span className="text-green-500">✔️ Correct</span>
-                                ) : (
-                                    <span className="text-red-500">❌ Incorrect</span>
-                                )}
-                            </li>
-                        ))}
-                    </ul>
+                <div className="text-center py-8 px-4 max-w-2xl mx-auto bg-white shadow-lg rounded-lg">
+                    <h2 className="text-3xl font-semibold text-gray-800">Quiz Completed!</h2>
+                    <p className="text-lg mt-4 text-gray-600">Your Score:</p>
+                    <div className="mt-6 flex items-center justify-center space-x-4">
+                        {/* Circle Score */}
+                        <div className="w-32 h-32">
+                            {getCircleScore()}
+                        </div>
+                    </div>
+
+                    <div className="mt-8">
+                        {/* Heading for correct answers */}
+                        <h3 className="text-xl font-semibold text-gray-800 mb-4">Correct Answers:</h3>
+
+                        {/* List of questions and answers */}
+                        <ul className="list-disc list-inside text-lg text-gray-800">
+                            {questions.map((question, index) => (
+                                <li key={index} className="flex flex-col space-y-2 mb-4">
+                                    <div className="flex items-center space-x-2">
+                                        <strong className="text-lg text-gray-900">Q{index + 1}:</strong>
+                                        <span className="flex-1 text-gray-700">{selectedOptions[index] || "No Answer Selected"}</span>
+                                    </div>
+                                    {/* Display Correct Answer */}
+                                    <div className="text-sm text-gray-600">
+                                        <strong className="text-gray-900">Correct Answer:</strong> {question.correctAns[0]}
+                                    </div>
+
+                                    {/* Result based on user answer */}
+                                    {selectedOptions[index] === question.correctAns[0] ? (
+                                        <span className="text-green-500 font-medium">✔️ Correct</span>
+                                    ) : (
+                                        <span className="text-red-500 font-medium">❌ Incorrect</span>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
                 </div>
+
             )}
         </div>
     );
