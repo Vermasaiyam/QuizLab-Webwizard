@@ -2,8 +2,10 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useSelector } from "react-redux";
 
 export default function ChangePassword() {
+    const { user } = useSelector(store => store.auth);
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [passwordData, setPasswordData] = useState({
@@ -30,7 +32,7 @@ export default function ChangePassword() {
 
             if (res.data.success) {
                 toast.success(res.data.message);
-                navigate("/profile");
+                navigate(`/profile/${user?._id}`);
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "An error occurred while changing the password.");

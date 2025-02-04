@@ -216,9 +216,9 @@ export const userData = async (req, res) => {
 export const changePassword = async (req, res) => {
     try {
         const userId = req.id;
-        const { currentPassword, newPassword } = req.body;
+        const { oldPassword, newPassword } = req.body;
 
-        if (!currentPassword || !newPassword) {
+        if (!oldPassword || !newPassword) {
             return res.status(400).json({ success: false, message: "All fields are required." });
         }
 
@@ -227,7 +227,7 @@ export const changePassword = async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found." });
         }
 
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ success: false, message: "Current password is incorrect." });
         }
