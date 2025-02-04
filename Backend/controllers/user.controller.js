@@ -47,7 +47,6 @@ export const login = async (req, res) => {
             });
         }
 
-        // Find user by email
         let user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
@@ -56,7 +55,6 @@ export const login = async (req, res) => {
             });
         }
 
-        // Compare password
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
             return res.status(401).json({
@@ -65,32 +63,26 @@ export const login = async (req, res) => {
             });
         }
 
-        // Generate JWT token
         const token = await jwt.sign(
             { userId: user._id },
             process.env.SECRET_KEY,
             { expiresIn: '1d' }
         );
 
-        // Populate each video if it exists in the videos array
         const populatedVideos = await Promise.all(
             user.videos.map(async (videoId) => {
                 const video = await Video.findById(videoId);
 
-                // Check if video exists and if the author matches the user
                 if (video && video.author && video.author.equals(user._id)) {
                     return video;
                 }
 
-                // Return null if video is not found or author doesn't match
                 return null;
             })
         );
 
-        // Filter out null values from the populatedVideos array
         const validVideos = populatedVideos.filter(video => video !== null);
 
-        // Construct user object for the response
         user = {
             _id: user._id,
             username: user.username,
@@ -99,7 +91,6 @@ export const login = async (req, res) => {
             videos: validVideos,
         };
 
-        // Send the response with a cookie
         return res
             .cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 1 * 24 * 60 * 60 * 1000 })
             .json({
@@ -119,7 +110,6 @@ export const login = async (req, res) => {
 
 export const logout = async (req, res) => {
     try {
-        // Clear the cookie
         res.cookie("token", "", {
             httpOnly: true,
             sameSite: 'Strict',
@@ -191,14 +181,14 @@ export const editProfile = async (req, res) => {
 
 export const userData = async (req, res) => {
     try {
-        const userId = req.params.id; // Assuming you're extracting userId from the request's token or session
+        const userId = req.params.id;
         const user = await User.findById(userId)
             .populate({
                 path: 'videos',
-                options: { sort: { createdAt: -1 } }, // Sort videos by creation date
+                options: { sort: { createdAt: -1 } },
                 populate: {
-                    path: 'questions', // Populate the questions in each video
-                    select: 'question options correctAns', // Select specific fields to return for each question
+                    path: 'questions',
+                    select: 'question options correctAns',
                 }
             });
 
@@ -222,3 +212,33 @@ export const userData = async (req, res) => {
         });
     }
 };
+
+export const changePassword = async (req, res) => {
+    try {
+        const userId = req.id;
+        const { currentPassword, newPassword } = req.body;
+
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ success: false, message: "All fields are required." });
+        }
+
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found." });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ success: false, message: "Current password is incorrect." });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(newPassword, salt);
+        await user.save();
+
+        return res.status(200).json({ success: true, message: "Password changed successfully." });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal server error." });
+    }
+}
