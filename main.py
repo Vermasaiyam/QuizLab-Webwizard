@@ -110,12 +110,10 @@ def modify_text():
     # Modify transcription using Groq API (Llama3-8b-8192 model)
     completion = client.chat.completions.create(
         model="llama3-8b-8192",
-        messages=[
-            {
-                "role": "user",
-                "content": f"Modify this content as {user_input} {transcription}"
-            }
-        ],
+        messages=[{
+            "role": "user",
+            "content": f"Modify this content as {user_input} {transcription}"
+        }],
         temperature=1,
         max_tokens=1024,
         top_p=1,
@@ -144,14 +142,12 @@ def save_to_google_docs():
     doc = service.documents().create(body=doc).execute()
     document_id = doc['documentId']
 
-    requests = [
-        {
-            'insertText': {
-                'location': {'index': 1},
-                'text': modified_text
-            }
+    requests = [{
+        'insertText': {
+            'location': {'index': 1},
+            'text': modified_text
         }
-    ]
+    }]
     service.documents().batchUpdate(documentId=document_id, body={'requests': requests}).execute()
 
     doc_url = f'https://docs.google.com/document/d/{document_id}'
@@ -159,9 +155,10 @@ def save_to_google_docs():
     return jsonify({'document_url': doc_url})
 
 
+# Entry point for WSGI
 if __name__ == "__main__":
     # Ensure uploads directory exists
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
