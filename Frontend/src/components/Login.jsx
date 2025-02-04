@@ -94,7 +94,7 @@ const Login = () => {
                             className="w-full p-3 mt-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-10 transition-all"
                         />
                         <button
-                            className="absolute inset-y-0 right-0 flex items-center px-3 bg-slate-100 focus:outline-none"
+                            className="absolute inset-y-0 right-0 flex items-center px-3 bg-slate-100 focus:outline-none cursor-pointer"
                             onClick={(e) => {
                                 e.preventDefault();
                                 handleClick();
@@ -112,7 +112,7 @@ const Login = () => {
                             Please wait
                         </button>
                     ) : (
-                        <button type='submit' className="w-full p-3 mt-4 bg-[#042035] hover:bg-[#165686] text-white rounded-md focus:outline-none transition-all">
+                        <button type='submit' className="w-full p-3 mt-4 bg-[#042035] hover:bg-[#165686] text-white rounded-md focus:outline-none transition-all cursor-pointer">
                             Login
                         </button>
                     )

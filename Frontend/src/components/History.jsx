@@ -168,7 +168,7 @@ const HistoryPage = () => {
                 <h1 className="text-3xl font-bold">History</h1>
                 <button
                     onClick={handleAddNew}
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition"
+                    className="bg-blue-500 text-white py-2 px-4 rounded-md shadow hover:bg-blue-600 transition cursor-pointer"
                 >
                     Add New +
                 </button>
@@ -259,7 +259,7 @@ const HistoryPage = () => {
                                         <p className="text-lg text-gray-700 mb-4">No quiz taken yet.</p>
                                         <button
                                             onClick={handleGenerateQuiz}
-                                            className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all"
+                                            className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all cursor-pointer"
                                         >
                                             Take Quiz
                                         </button>

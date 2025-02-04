@@ -27,7 +27,7 @@ const Profile = () => {
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">My Profile</h1>
                 <img src={user?.profilePicture || '/user.png'} alt="Profile Picture" className="rounded-full w-52 h-52 mx-auto" />
                 <Link to={`edit`}>
-                    <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white py-2 px-4 rounded mt-4">
+                    <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white py-2 px-4 rounded mt-4 cursor-pointer">
                         Edit Profile
                     </button>
                 </Link>
@@ -49,12 +49,12 @@ const Profile = () => {
 
                 <div className="flex space-x-4">
                     <Link to={'/history'}>
-                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             History
                         </button>
                     </Link>
                     <Link to={'change-password'}>
-                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
                             Change Password
                         </button>
                     </Link>

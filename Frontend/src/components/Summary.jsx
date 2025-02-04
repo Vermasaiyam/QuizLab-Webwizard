@@ -124,7 +124,7 @@ const SummaryPage = () => {
 
                 {/* Quiz Button */}
                 <button
-                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300"
+                    className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300 cursor-pointer"
                     onClick={handleGenerateQuiz}
                 >
                     🎯 Generate Quiz

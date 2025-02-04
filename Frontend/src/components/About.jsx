@@ -59,7 +59,7 @@ export default function About() {
                 <p className="mt-3 text-lg text-gray-600">Start transcribing, summarizing, and earning rewards today!</p>
                 <button
                     onClick={() => navigate("/")}
-                    className="mt-5 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-all"
+                    className="mt-5 bg-blue-600 text-white px-6 py-3 rounded-full font-semibold shadow-md hover:bg-blue-700 transition-all cursor-pointer"
                 >
                     Get Started
                 </button>

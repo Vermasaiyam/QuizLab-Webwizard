@@ -121,7 +121,7 @@ export default function EditProfile() {
                             e.preventDefault();
                             handleSubmit();
                         }}
-                        className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline cursor-pointer"
                     >
                         {isLoading ? "Saving Changes" : "Save Changes"}
                     </button>

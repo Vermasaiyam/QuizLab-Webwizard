@@ -50,7 +50,7 @@ export default function Header() {
 
         {/* Hamburger Menu - Visible on Mobile */}
         <button
-          className="md:hidden text-white focus:outline-none"
+          className="md:hidden text-white focus:outline-none cursor-pointer"
           onClick={toggleMenu}
         >
           {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
@@ -98,7 +98,7 @@ export default function Header() {
                       <li>
                         <button
                           onClick={logoutHandler}
-                          className="block w-full px-4 py-2 text-sm text-gray-800 hover:bg-gray-200 text-left"
+                          className="block w-full px-4 py-2 text-sm text-gray-800 hover:bg-gray-200 text-left cursor-pointer"
                         >
                           Logout
                         </button>
@@ -109,7 +109,7 @@ export default function Header() {
               </>
             ) : (
               <Link to="/login">
-                <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
                   Login
                 </button>
               </Link>
@@ -149,14 +149,14 @@ export default function Header() {
                 </Link>
                 <button
                   onClick={logoutHandler}
-                  className="text-lg text-gray-300 hover:text-white"
+                  className="text-lg text-gray-300 hover:text-white cursor-pointer"
                 >
                   Logout
                 </button>
               </>
             ) : (
               <Link to="/login">
-                <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded">
+                <button className="bg-red-500 hover:bg-red-700 transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
                   Login
                 </button>
               </Link>

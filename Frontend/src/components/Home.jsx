@@ -274,7 +274,7 @@ export default function Home() {
 
                 <div>
                     <button
-                        className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 hover:bg-blue-700"
+                        className="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 hover:bg-blue-700 cursor-pointer"
                         onClick={handleUpload}
                         disabled={loading}
                     >
