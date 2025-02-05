@@ -2,6 +2,8 @@ import { useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import useGetUserProfile from '../hooks/getUserProfile';
 import { Loader2 } from 'lucide-react';
+import moment from 'moment';
+import { useEffect } from 'react';
 
 const Profile = () => {
     const params = useParams();
@@ -18,8 +20,6 @@ const Profile = () => {
             </p>
         );
     }
-
-    const formattedDate = user?.createdAt ? user.createdAt.toDate().toLocaleDateString() : '';
 
     return (
         <div className="min-h-[70vh] w-full items-center grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4">
@@ -44,7 +44,9 @@ const Profile = () => {
                 </div>
                 <div className="mb-4">
                     <p className="block text-gray-700 text-2xl font-bold mb-2">Joined On:</p>
-                    <p className="text-gray-900 text-xl font-normal">{formattedDate || 'N/A'}</p>
+                    <p className="text-gray-900 text-xl font-normal">
+                        {moment(user?.createdAt).format('LL')}
+                    </p>
                 </div>
 
                 <div className="flex space-x-4">
