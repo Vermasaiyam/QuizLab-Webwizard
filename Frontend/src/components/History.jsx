@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { Loader2, Trash2 } from "lucide-react";
@@ -213,12 +213,12 @@ const HistoryPage = () => {
                             {history.map((video) => (
                                 <div
                                     key={video._id}
-                                    className={`relative border rounded-lg p-4 shadow hover:shadow-2xl cursor-pointer transition ${selectedVideo?._id === video._id ? 'shadow-2xl bg-gray-200' : ''
+                                    className={`relative border rounded-lg p-4 shadow hover:shadow-2xl cursor-pointer transition ${selectedVideo?._id === video._id ? "shadow-2xl bg-gray-200" : ""
                                         }`}
                                     onClick={() => handleVideoClick(video._id)}
                                 >
                                     <button
-                                        className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-700 transition"
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-700 transition z-5"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             handleDelete(video._id);
@@ -227,7 +227,46 @@ const HistoryPage = () => {
                                         <Trash2 className="w-3 h-3" />
                                     </button>
 
-                                    <h2 className="text-xl font-semibold">{video.title}</h2>
+                                    {video.youTubeUrl ? (
+                                        <Link
+                                            to={video.youTubeUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="relative group block"
+                                        >
+                                            {/* Video Thumbnail */}
+                                            <img
+                                                src={video.videoThumbnail || "/audio.jpeg"}
+                                                alt="Video Thumbnail"
+                                                className="w-full h-40 object-cover rounded-md transition-opacity duration-300"
+                                            />
+
+                                            {/* Overlay - Fades in on hover */}
+                                            <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                                                {!video.videoThumbnail && (
+                                                    <img
+                                                        src="/audio.jpeg"
+                                                        alt="Audio Placeholder"
+                                                        className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300 rounded-md"
+                                                    />
+                                                )}
+
+                                                <img
+                                                    src="/youtubeLogo.png"
+                                                    alt="YouTube Logo"
+                                                    className="w-12 h-12 z-10"
+                                                />
+                                            </div>
+                                        </Link>
+                                    ) : (
+                                        <img
+                                            src={video.videoThumbnail || "/audio.jpeg"}
+                                            alt="Video Thumbnail"
+                                            className="w-full h-40 object-cover rounded-md"
+                                        />
+                                    )}
+
+                                    <h2 className="text-xl font-semibold mt-2">{video.title}</h2>
                                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.summary}</p>
                                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.transcription}</p>
                                 </div>
@@ -237,63 +276,88 @@ const HistoryPage = () => {
                     {selectedVideo && (
                         <div ref={selectedVideoRef} className="mt-8 p-6 bg-gray-100 rounded-lg shadow-lg">
 
-                            <h2 className="text-2xl font-bold text-gray-800">{selectedVideo.title}</h2>
+                            {selectedVideo.youTubeUrl && (
+                                <Link
+                                    to={selectedVideo.youTubeUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="relative group block"
+                                >
+                                    <img
+                                        src={selectedVideo.videoThumbnail || "/audio.jpeg"}
+                                        alt="Video Thumbnail"
+                                        className="w-full h-40 object-cover rounded-md mb-4 transition-opacity duration-300"
+                                    />
 
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                                        {!selectedVideo.videoThumbnail && (
+                                            <img
+                                                src="/audio.jpeg"
+                                                alt="Audio Placeholder"
+                                                className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300 rounded-md"
+                                            />
+                                        )}
+
+                                        <img
+                                            src="/youtubeLogoRed.png"
+                                            alt="YouTube Logo"
+                                            className="w-20 h-12 z-10"
+                                        />
+                                    </div>
+                                </Link>
+                            )}
+
+                            <h2 className="text-2xl font-bold text-gray-800">{selectedVideo.title}</h2>
                             <p className="mt-4 text-gray-700 leading-relaxed">{selectedVideo.summary}</p>
                             <p className="mt-4 text-gray-600 leading-relaxed italic">{selectedVideo.transcription}</p>
 
-                            {
-                                selectedVideo.questions && selectedVideo.questions.length > 0 ? (
-                                    <>
-                                        <div className="mt-6 flex items-center gap-2">
-                                            <span className="text-lg font-semibold text-gray-700">Score:</span>
-                                            <div className="text-black px-3 py-1 rounded-full text-sm font-medium">
-                                                {getCircleScore()}
-                                            </div>
+                            {selectedVideo.questions && selectedVideo.questions.length > 0 ? (
+                                <>
+                                    <div className="mt-6 flex items-center gap-2">
+                                        <span className="text-lg font-semibold text-gray-700">Score:</span>
+                                        <div className="text-black px-3 py-1 rounded-full text-sm font-medium">
+                                            {getCircleScore()}
                                         </div>
-                                        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
-                                            <h3 className="text-xl font-semibold text-gray-800 mb-4">Quiz Questions</h3>
-                                            <ul className="space-y-6">
-                                                {selectedVideo.questions?.map((question, index) => (
-                                                    <li key={index} className="bg-gray-50 p-4 rounded-lg border">
-
-                                                        <p className="font-medium text-gray-900">{question.question}</p>
-
-                                                        <ul className="mt-3 space-y-2">
-                                                            {question.options?.map((option, idx) => (
-                                                                <li
-                                                                    key={idx}
-                                                                    className={`p-2 rounded-lg ${option === question.correctAns ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700'
-                                                                        }`}
-                                                                >
-                                                                    {option} {option === question.correctAns && '✅'}
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-
-                                                        <div className="mt-3 flex items-center gap-2">
-                                                            <span className="font-semibold text-gray-800">Correct Answer:</span>
-                                                            <span className="bg-green-500 text-white px-3 py-1 rounded-md text-sm font-medium">
-                                                                {question.correctAns}
-                                                            </span>
-                                                        </div>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="mt-6 text-center">
-                                        <p className="text-lg text-gray-700 mb-4">No quiz taken yet.</p>
-                                        <button
-                                            onClick={handleGenerateQuiz}
-                                            className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all cursor-pointer"
-                                        >
-                                            Take Quiz
-                                        </button>
                                     </div>
-                                )
-                            }
+                                    <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">Quiz Questions</h3>
+                                        <ul className="space-y-6">
+                                            {selectedVideo.questions?.map((question, index) => (
+                                                <li key={index} className="bg-gray-50 p-4 rounded-lg border">
+                                                    <p className="font-medium text-gray-900">{question.question}</p>
+                                                    <ul className="mt-3 space-y-2">
+                                                        {question.options?.map((option, idx) => (
+                                                            <li
+                                                                key={idx}
+                                                                className={`p-2 rounded-lg ${option === question.correctAns ? 'bg-green-100 text-green-700 font-semibold' : 'text-gray-700'
+                                                                    }`}
+                                                            >
+                                                                {option} {option === question.correctAns && '✅'}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                    <div className="mt-3 flex items-center gap-2">
+                                                        <span className="font-semibold text-gray-800">Correct Answer:</span>
+                                                        <span className="bg-green-500 text-white px-3 py-1 rounded-md text-sm font-medium">
+                                                            {question.correctAns}
+                                                        </span>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="mt-6 text-center">
+                                    <p className="text-lg text-gray-700 mb-4">No quiz taken yet.</p>
+                                    <button
+                                        onClick={handleGenerateQuiz}
+                                        className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+                                    >
+                                        Take Quiz
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     )}
                 </>
