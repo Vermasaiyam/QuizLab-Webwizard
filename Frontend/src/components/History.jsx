@@ -250,9 +250,9 @@ const HistoryPage = () => {
                                                 )}
 
                                                 <img
-                                                    src="/youtubeLogoRed.png"
+                                                    src="/youtubeLogo.png"
                                                     alt="YouTube Logo"
-                                                    className="w-20 h-12 z-10"
+                                                    className="w-12 h-12 z-10"
                                                 />
                                             </div>
                                         </Link>

@@ -114,7 +114,7 @@ const SummaryPage = () => {
                         <img
                             src={videoDetails.videoThumbnail || "/audio.jpeg"}
                             alt="Video Thumbnail"
-                            className="w-full h-64 object-cover rounded-md transition-opacity duration-300"
+                            className="w-full h-64 object-cover rounded-md "
                         />
 
                         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
@@ -135,7 +135,7 @@ const SummaryPage = () => {
                     </Link>
                 )}
 
-                <h2 className="md:text-2xl text-xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
+                <h2 className="md:text-2xl text-xl font-semibold text-blue-600 mb-4">{videoDetails.title === "null" ? "No Title" : videoDetails.title}</h2>
 
                 <div className="mb-6">
                     <h3 className="text-lg font-semibold text-gray-700 border-b-2 pb-2 mb-2">

@@ -110,8 +110,10 @@ export const uploadTranscription = async (req, res) => {
 
         video.transcription = transcription;
         video.summary = summary;
-        video.title = title || "Untitled Video",
-        video.videoThumbnail = thumbnail || "",
+        video.videoThumbnail = thumbnail || "";
+        if (title){
+            video.title = title;
+        }
 
         await video.save();
 
