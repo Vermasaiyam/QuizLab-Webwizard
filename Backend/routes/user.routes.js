@@ -1,5 +1,5 @@
 import express from "express";
-import { changePassword, editProfile, getProfile, login, logout, register, userData } from "../controllers/user.controller.js";
+import { changePassword, deleteAccount, editProfile, getProfile, login, logout, register, userData } from "../controllers/user.controller.js";
 import Authenticated from "../middlewares/Authenticated.js";
 import upload from "../middlewares/multer.js";
 
@@ -13,5 +13,6 @@ router.route('/profile/edit').post(Authenticated, upload.single('profilePicture'
 router.route('/change-password').post(Authenticated, changePassword);
 router.route('/logout').get(logout);
 router.route('/userData/:id').get(userData);
+router.route('/delete/:userId').delete(deleteAccount);
 
 export default router;

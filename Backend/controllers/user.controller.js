@@ -4,37 +4,55 @@ import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Question } from "../models/question.model.js";
 
 export const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
+
         if (!username || !email || !password) {
-            return res.status(401).json({
+            return res.status(400).json({
                 message: "Empty fields!!!",
                 success: false,
             });
         }
-        const user = await User.findOne({ email });
-        if (user) {
-            return res.status(401).json({
-                message: "User already exists.",
+
+        const userByEmail = await User.findOne({ email });
+        if (userByEmail) {
+            return res.status(400).json({
+                message: "User with this email already exists.",
                 success: false,
             });
-        };
+        }
+
+        const userByUsername = await User.findOne({ username });
+        if (userByUsername) {
+            return res.status(400).json({
+                message: "Username already taken. Please choose another one.",
+                success: false,
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 7);
+
         await User.create({
             username,
             email,
-            password: hashedPassword
+            password: hashedPassword,
         });
+
         return res.status(201).json({
             message: "Account created successfully.",
             success: true,
         });
     } catch (error) {
         console.log(error);
+        return res.status(500).json({
+            message: "An error occurred while creating the account.",
+            success: false,
+        });
     }
-}
+};
 
 export const login = async (req, res) => {
     try {
@@ -240,5 +258,38 @@ export const changePassword = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: "Internal server error." });
+    }
+}
+
+export const deleteAccount = async (req, res) => {
+    const { userId } = req.params;
+    // const userId = req.id;
+    console.log("Received userId:", userId);
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const videos = await Video.find({ user: userId });
+        if (videos.length > 0) {
+            await Question.deleteMany({ videoId: { $in: videos.map(video => video._id) } });
+
+            await Video.deleteMany({ user: userId });
+        }
+
+        await User.findByIdAndDelete(userId);
+
+        res.cookie("token", "", {
+            httpOnly: true,
+            sameSite: 'Strict',
+            expires: new Date(0)
+        });
+
+        return res.status(200).json({ message: 'Account and associated data deleted successfully.' });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error. Please try again.' });
     }
 }
