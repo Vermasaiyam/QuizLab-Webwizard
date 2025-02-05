@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import useGetUserProfile from '../hooks/getUserProfile';
 import { Loader2 } from 'lucide-react';
 import moment from 'moment';
-import { useEffect } from 'react';
 
 const Profile = () => {
     const params = useParams();
