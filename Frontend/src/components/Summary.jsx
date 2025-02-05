@@ -104,6 +104,37 @@ const SummaryPage = () => {
             <h1 className="md:text-4xl text-2xl font-bold text-center text-gray-900 mb-8">📹 Video Summary</h1>
 
             <div className="bg-white p-6 rounded-lg shadow-sm">
+                {videoDetails.youTubeUrl && (
+                    <Link
+                        to={videoDetails.youTubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="relative group block mb-6"
+                    >
+                        <img
+                            src={videoDetails.videoThumbnail || "/audio.jpeg"}
+                            alt="Video Thumbnail"
+                            className="w-full h-64 object-cover rounded-md transition-opacity duration-300"
+                        />
+
+                        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
+                            {!videoDetails.videoThumbnail && (
+                                <img
+                                    src="/audio.jpeg"
+                                    alt="Audio Placeholder"
+                                    className="absolute inset-0 w-full h-full object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-300 rounded-md"
+                                />
+                            )}
+
+                            <img
+                                src="/youtubeLogo.png"
+                                alt="YouTube Logo"
+                                className="w-16 h-16 z-10"
+                            />
+                        </div>
+                    </Link>
+                )}
+
                 <h2 className="md:text-2xl text-xl font-semibold text-blue-600 mb-4">{videoDetails.title}</h2>
 
                 <div className="mb-6">
