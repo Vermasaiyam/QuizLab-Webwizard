@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { Loader2 } from "lucide-react";
+import { Loader2, Trash2 } from "lucide-react";
 import 'react-circular-progressbar/dist/styles.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { toast } from 'sonner';
@@ -50,16 +50,34 @@ const HistoryPage = () => {
     const totalScore = history.reduce((acc, video) => acc + (video.score || 0), 0);
 
     useEffect(() => {
-        console.log("History state:", history);
-    }, [history]);
-
-    useEffect(() => {
         if (selectedVideoRef.current) {
             setTimeout(() => {
                 selectedVideoRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
             }, 100);
         }
     }, [selectedVideo]);
+
+    const handleDelete = async (videoId) => {
+        try {
+            setLoading(true);
+            const response = await axios.delete(`http://localhost:8000/api/video/delete/${videoId}`, {
+                data: { userId: user._id }
+            });
+
+            if (response.data.success) {
+                toast.success("Video deleted successfully!");
+                setHistory(history.filter(video => video._id !== videoId));
+                if (selectedVideo?._id === videoId) setSelectedVideo(null);
+            } else {
+                toast.error("Failed to delete video.");
+            }
+        } catch (error) {
+            console.error("Error deleting video:", error);
+            toast.error("An error occurred while deleting the video.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const getCircleScore = () => {
         const percentage = (selectedVideo.score / selectedVideo.questions.length) * 100;
@@ -195,10 +213,20 @@ const HistoryPage = () => {
                             {history.map((video) => (
                                 <div
                                     key={video._id}
-                                    className={`border rounded-lg p-4 shadow hover:shadow-2xl cursor-pointer transition ${selectedVideo?._id === video._id ? 'shadow-2xl bg-gray-200' : ''
+                                    className={`relative border rounded-lg p-4 shadow hover:shadow-2xl cursor-pointer transition ${selectedVideo?._id === video._id ? 'shadow-2xl bg-gray-200' : ''
                                         }`}
                                     onClick={() => handleVideoClick(video._id)}
                                 >
+                                    <button
+                                        className="absolute top-2 right-2 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-700 transition"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleDelete(video._id);
+                                        }}
+                                    >
+                                        <Trash2 className="w-3 h-3" />
+                                    </button>
+
                                     <h2 className="text-xl font-semibold">{video.title}</h2>
                                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.summary}</p>
                                     <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.transcription}</p>
