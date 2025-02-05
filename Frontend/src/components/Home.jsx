@@ -9,7 +9,7 @@ export default function Home() {
     const navigate = useNavigate();
     const [file, setFile] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [inputType, setInputType] = useState("file"); // State to control the dropdown selection
+    const [inputType, setInputType] = useState("file");
     const [youTubeUrl, setYouTubeUrl] = useState("");
 
     const loadingTexts = [
@@ -66,13 +66,18 @@ export default function Home() {
                     throw new Error(errorData.error || 'Download failed');
                 }
 
-
                 const blob = await response.blob();
                 const file = new File([blob], "audio.mp3", { type: "audio/mpeg" });
+
+                // Extract title and thumbnail from response headers
+                const videoTitle = response.headers.get("X-Video-Title");
+                const videoThumbnail = response.headers.get("X-Video-Thumbnail");
 
                 // Step 1: Upload MP3 file to Node.js backend
                 const formData = new FormData();
                 formData.append("file", file);
+                formData.append("title", videoTitle);
+                formData.append("thumbnail", videoThumbnail);
 
                 const uploadResponse = await axios.post(
                     "http://localhost:8000/api/video/uploadVideo",
@@ -136,6 +141,8 @@ export default function Home() {
                     videoId: video._id,
                     transcription: transcription,
                     summary: summaryText,
+                    title: videoTitle,
+                    thumbnail: videoThumbnail,
                 };
 
                 const saveTranscriptionResponse = await axios.post(
@@ -152,7 +159,6 @@ export default function Home() {
                 } else {
                     toast.error("Failed to save transcription.");
                 }
-
             } else {
                 // File upload logic (for audio/video files)
                 const formData = new FormData();

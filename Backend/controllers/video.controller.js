@@ -66,7 +66,7 @@ export const uploadVideo = async (req, res) => {
 export const uploadTranscription = async (req, res) => {
     try {
         const userId = req.id;
-        const { videoId, transcription, summary } = req.body;
+        const { videoId, transcription, summary, title, thumbnail } = req.body;
 
         if (!transcription) {
             return res.status(400).json({
@@ -105,6 +105,8 @@ export const uploadTranscription = async (req, res) => {
 
         video.transcription = transcription;
         video.summary = summary;
+        video.title = title || "Untitled Video",
+        video.videoThumbnail = thumbnail || "",
 
         await video.save();
 
@@ -122,7 +124,7 @@ export const uploadTranscription = async (req, res) => {
     }
 };
 
-export const deleteVideo = async(req, res)=>{
+export const deleteVideo = async (req, res) => {
     try {
         const { videoId } = req.params;
         const { userId } = req.body;

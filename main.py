@@ -46,6 +46,7 @@ def authenticate_google_docs():
 def index():
     return render_template('index.html')
 
+
 @app.route('/download-audio', methods=['POST'])
 def download_audio():
     try:
@@ -56,24 +57,27 @@ def download_audio():
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
-                'key': 'FFmpegExtractAudio',  # Corrected key for extracting audio
-                'preferredcodec': 'mp3',  # Convert to MP3
-                'preferredquality': '192',  # Set audio quality
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
             }],
-            'outtmpl': f'{DOWNLOADS_DIR}/%(id)s.%(ext)s',  # Save files in "downloads" directory
+            'outtmpl': f'{DOWNLOADS_DIR}/%(id)s.%(ext)s',
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=True)
-            video_id = info_dict.get("id")  # Extract video ID
-            mp3_file = os.path.join(DOWNLOADS_DIR, f"{video_id}.mp3")  # Construct MP3 filename
+            video_id = info_dict.get("id")
+            video_title = info_dict.get("title")
+            thumbnail_url = info_dict.get("thumbnail")
+            mp3_file = os.path.join(DOWNLOADS_DIR, f"{video_id}.mp3")
 
-        # Check if the file was successfully converted
         if not os.path.exists(mp3_file):
             return jsonify({'error': 'Failed to process MP3 file'}), 500
 
-        # Return the MP3 file to the frontend for download
-        return send_file(mp3_file, as_attachment=True, download_name=f"{video_id}.mp3", mimetype="audio/mpeg")
+        return send_file(mp3_file, as_attachment=True, download_name=f"{video_id}.mp3", mimetype="audio/mpeg"), 200, {
+            "X-Video-Title": video_title,
+            "X-Video-Thumbnail": thumbnail_url
+        }
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
