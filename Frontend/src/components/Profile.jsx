@@ -75,20 +75,20 @@ const Profile = () => {
                     </p>
                 </div>
 
-                <div className="flex space-x-4">
+                <div className="flex md:space-x-4 space-x-2">
                     <Link to={'/history'}>
-                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 md:px-4 px-3 rounded cursor-pointer md:text-base text-sm">
                             History
                         </button>
                     </Link>
                     <button
                         onClick={handleDeleteAccount}
-                        className="bg-red-500 hover:bg-red-700 text-white py-2 px-4 rounded cursor-pointer"
+                        className="bg-red-500 hover:bg-red-700 text-white py-2 md:px-4 px-2 rounded cursor-pointer md:text-base text-sm"
                     >
                         Delete Account
                     </button>
                     <Link to={'change-password'}>
-                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                        <button className="bg-[#2A3B5F] hover:bg-[#0B1930] transition-all duration-200 text-white font-bold py-2 md:px-4 px-3 rounded cursor-pointer md:text-base text-sm">
                             Change Password
                         </button>
                     </Link>
