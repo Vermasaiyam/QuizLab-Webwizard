@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 const SummaryPage = () => {
@@ -19,11 +20,10 @@ const SummaryPage = () => {
                 if (response.data.success) {
                     setVideoDetails(response.data.video);
                 } else {
-                    alert("Failed to fetch video details.");
+                    toast.error("Failed to fetch video details.");
                 }
             } catch (error) {
-                console.error("Error fetching video details:", error);
-                alert("An error occurred while fetching video details.");
+                toast.error("An error occurred while fetching video details.", error);
             } finally {
                 setLoading(false);
             }
@@ -47,22 +47,22 @@ const SummaryPage = () => {
                 { headers: { 'Content-Type': 'application/json' } }
             );
 
-            console.log('Response from Python backend:', response.data);
+            // console.log('Response from Python backend:', response.data);
 
             let modifiedText = response.data.modified_text;
 
-            console.log("modifiedText", modifiedText);
+            // console.log("modifiedText", modifiedText);
 
             // Clean the response by extracting the JSON part
             const jsonStartIndex = modifiedText.indexOf('[');
             const jsonEndIndex = modifiedText.lastIndexOf(']') + 1;
             const jsonString = modifiedText.slice(jsonStartIndex, jsonEndIndex);
 
-            console.log('Extracted JSON string:', jsonString);
+            // console.log('Extracted JSON string:', jsonString);
 
             const quizQuestions = JSON.parse(jsonString);
 
-            console.log('Parsed quiz questions:', quizQuestions);
+            // console.log('Parsed quiz questions:', quizQuestions);
 
             // Send the modified questions to the backend
             const saveQuizResponse = await axios.post(
@@ -72,15 +72,15 @@ const SummaryPage = () => {
             );
 
             if (saveQuizResponse.data.success) {
-                alert('Quiz generated successfully!');
+                toast.success('Quiz generated successfully!');
             } else {
-                // alert('Failed to save quiz.');
-                console.log("Failed to save the quiz");
+                toast.error('Failed to save quiz.');
+                // console.log("Failed to save the quiz");
             }
             navigate(`/quiz/${videoDetails._id}`);
         } catch (error) {
-            console.error('Error generating quiz:', error.message);
-            // alert(error.message);
+            // console.error('Error generating quiz:', error.message);
+            toast.error(error.message);
         } finally {
             setLoading(false);
             navigate(`/quiz/${videoDetails._id}`);

@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { Loader2 } from "lucide-react";
 import 'react-circular-progressbar/dist/styles.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
+import { toast } from 'sonner';
 
 const HistoryPage = () => {
     const navigate = useNavigate();
@@ -95,11 +96,11 @@ const HistoryPage = () => {
             if (response.data.success) {
                 setVideoDetails(response.data.video);
             } else {
-                alert("Failed to fetch video details.");
+                toast.error("Failed to fetch video details.");
             }
         } catch (error) {
-            console.error("Error fetching video details:", error);
-            alert("An error occurred while fetching video details.");
+            // console.error("Error fetching video details:", error);
+            toast.error("An error occurred while fetching video details.", error);
         } finally {
             setLoading(false);
         }
@@ -147,15 +148,14 @@ const HistoryPage = () => {
             );
 
             if (saveQuizResponse.data.success) {
-                alert('Quiz generated successfully!');
+                toast.success('Quiz generated successfully!');
             } else {
-                // alert('Failed to save quiz.');
-                console.log("Failed to save the quiz");
+                toast.error('Failed to save quiz.');
             }
             navigate(`/quiz/${videoDetails._id}`);
         } catch (error) {
             console.error('Error generating quiz:', error.message);
-            // alert(error.message);
+            toast.error(error.message);
         } finally {
             setLoading(false);
             navigate(`/quiz/${videoDetails._id}`);
