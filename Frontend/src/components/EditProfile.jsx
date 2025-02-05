@@ -72,12 +72,27 @@ export default function EditProfile() {
         <div className="container mx-auto p-4 min-h-[70vh] mt-8">
             <h1 className="text-2xl font-bold mb-4 text-center">Edit Profile</h1>
             <div className="flex flex-col items-center gap-3">
-                <label className="relative cursor-pointer">
-                    <img src={data.profilePicture || profilePicture || "/user.png"}
+                <label className="relative cursor-pointer group">
+                    <img
+                        src={data.profilePicture || profilePicture || "/user.png"}
                         alt="Profile"
-                        className="w-24 h-24 rounded-full object-cover border"
+                        className="w-28 h-28 rounded-full object-cover border transition-opacity duration-300 group-hover:opacity-80"
                     />
-                    <input type="file" accept="image/*" className="hidden" onChange={handleProfilePictureChange} />
+
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-300 bg-opacity-60 opacity-0 group-hover:opacity-70 transition-opacity duration-300 rounded-full">
+                        <img
+                            src="/cameraIcon.png"
+                            alt="Change Profile"
+                            className="w-10 h-8"
+                        />
+                    </div>
+
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleProfilePictureChange}
+                    />
                 </label>
             </div>
             <form
