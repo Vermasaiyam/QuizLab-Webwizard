@@ -234,14 +234,12 @@ const HistoryPage = () => {
                                             rel="noopener noreferrer"
                                             className="relative group block"
                                         >
-                                            {/* Video Thumbnail */}
                                             <img
                                                 src={video.videoThumbnail || "/audio.jpeg"}
                                                 alt="Video Thumbnail"
                                                 className="w-full h-40 object-cover rounded-md transition-opacity duration-300"
                                             />
 
-                                            {/* Overlay - Fades in on hover */}
                                             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-md">
                                                 {!video.videoThumbnail && (
                                                     <img
@@ -252,9 +250,9 @@ const HistoryPage = () => {
                                                 )}
 
                                                 <img
-                                                    src="/youtubeLogo.png"
+                                                    src="/youtubeLogoRed.png"
                                                     alt="YouTube Logo"
-                                                    className="w-12 h-12 z-10"
+                                                    className="w-20 h-12 z-10"
                                                 />
                                             </div>
                                         </Link>
