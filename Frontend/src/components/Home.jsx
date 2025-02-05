@@ -76,8 +76,9 @@ export default function Home() {
                 // Step 1: Upload MP3 file to Node.js backend
                 const formData = new FormData();
                 formData.append("file", file);
-                formData.append("title", videoTitle);
-                formData.append("thumbnail", videoThumbnail);
+                formData.append("videoTitle", videoTitle);
+                formData.append("videoThumbnail", videoThumbnail);
+                formData.append("youTubeUrl", youTubeUrl);
 
                 const uploadResponse = await axios.post(
                     "http://localhost:8000/api/video/uploadVideo",
@@ -141,8 +142,8 @@ export default function Home() {
                     videoId: video._id,
                     transcription: transcription,
                     summary: summaryText,
-                    title: videoTitle,
-                    thumbnail: videoThumbnail,
+                    videoTitle: videoTitle,
+                    videoThumbnail: videoThumbnail,
                 };
 
                 const saveTranscriptionResponse = await axios.post(

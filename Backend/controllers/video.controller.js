@@ -9,6 +9,9 @@ export const uploadVideo = async (req, res) => {
         const userId = req.id;
         const video = req.file;
 
+        // Extract additional fields
+        const { videoTitle, videoThumbnail, youTubeUrl } = req.body;
+
         if (!video) {
             return res.status(400).json({
                 message: 'No video file uploaded.',
@@ -22,10 +25,12 @@ export const uploadVideo = async (req, res) => {
             resource_type: "video", // Specify the resource type as video
         });
 
-        // Create a new Video document
+        // Create a new Video document with additional fields
         const newVideo = new Video({
             videoUrl: cloudResponse.secure_url,
-            title: req.file.originalname,
+            title: videoTitle || video.originalname, // Use provided title or fallback
+            videoThumbnail, // Save thumbnail
+            youTubeUrl, // Save YouTube URL
             summary: "Default summary", // Replace with actual summary if available
         });
 
