@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_file
 import os
 import whisper
 import yt_dlp
@@ -19,6 +19,12 @@ model = whisper.load_model("base")
 client = Groq(api_key='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')
 
 SCOPES = ['https://www.googleapis.com/auth/documents']
+
+DOWNLOADS_DIR = "downloads"
+
+# Ensure the downloads directory exists
+if not os.path.exists(DOWNLOADS_DIR):
+    os.makedirs(DOWNLOADS_DIR)
 
 # Function to handle Google Docs Authentication
 def authenticate_google_docs():
@@ -44,27 +50,30 @@ def index():
 def download_audio():
     try:
         url = request.json.get('url')
-
         if not url:
             return jsonify({'error': 'No URL provided'}), 400
 
-        # Set up yt-dlp options to extract audio and convert to MP3
         ydl_opts = {
             'format': 'bestaudio/best',
             'postprocessors': [{
-                'key': 'FFmpegAudioConvertor',  # Corrected key for FFmpeg audio conversion
-                'preferredcodec': 'mp3',  # Output audio format
-                'preferredquality': '192',  # Audio quality
+                'key': 'FFmpegExtractAudio',  # Corrected key for extracting audio
+                'preferredcodec': 'mp3',  # Convert to MP3
+                'preferredquality': '192',  # Set audio quality
             }],
-            'outtmpl': 'downloads/%(id)s.%(ext)s',  # Save audio to "downloads" directory
+            'outtmpl': f'{DOWNLOADS_DIR}/%(id)s.%(ext)s',  # Save files in "downloads" directory
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(url, download=True)
-            file_name = ydl.prepare_filename(info_dict)
-            file_path = os.path.join('downloads', file_name.replace('.webm', '.mp3'))
+            video_id = info_dict.get("id")  # Extract video ID
+            mp3_file = os.path.join(DOWNLOADS_DIR, f"{video_id}.mp3")  # Construct MP3 filename
 
-        return jsonify({'audioFile': file_path})  # Return path to the downloaded audio file
+        # Check if the file was successfully converted
+        if not os.path.exists(mp3_file):
+            return jsonify({'error': 'Failed to process MP3 file'}), 500
+
+        # Return the MP3 file to the frontend for download
+        return send_file(mp3_file, as_attachment=True, download_name=f"{video_id}.mp3", mimetype="audio/mpeg")
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

@@ -29,15 +29,15 @@ export default function Home() {
                     if (prev + 1 < loadingTexts.length) {
                         return prev + 1;
                     } else {
-                        clearInterval(interval); // Stop when last message is reached
+                        clearInterval(interval);
                         return prev;
                     }
                 });
-            }, 5000); // Change text every 5 seconds
+            }, 6000);
 
             return () => clearInterval(interval);
         } else {
-            setLoadingStep(0); // Reset when loading is false
+            setLoadingStep(0);
         }
     }, [loading]);
 
@@ -55,66 +55,92 @@ export default function Home() {
 
         try {
             if (inputType === "youtube") {
-                // Handle YouTube URL processing
-                const response = await axios.post("http://127.0.0.1:5000/download-audio", {
-                    url: youTubeUrl,
+                const response = await fetch('http://localhost:5000/download-audio', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: youTubeUrl }),
                 });
 
-                console.log("Response from backend:", response);  // Log the response
-
-                if (response.data.audioFile) {
-                    console.log("Audio file path:", response.data.audioFile);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Download failed');
                 }
 
-                const audioFile = response.data.audioFile; // Assuming backend returns the audio file path
 
-                // Send audio file to Python backend for transcription
-                const transcriptionResponse = await axios.post(
-                    "http://127.0.0.1:5000/transcribe",
-                    { file: audioFile },
-                    { headers: { "Content-Type": "application/json" } }
+                const blob = await response.blob();
+                const file = new File([blob], "audio.mp3", { type: "audio/mpeg" });
+
+                // Step 1: Upload MP3 file to Node.js backend
+                const formData = new FormData();
+                formData.append("file", file);
+
+                const uploadResponse = await axios.post(
+                    "http://localhost:8000/api/video/uploadVideo",
+                    formData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                        withCredentials: true,
+                    }
                 );
 
-                const transcription = transcriptionResponse.data.transcription;
-
-                if (!transcription) {
-                    toast.error("Failed to get transcription.");
-                    setLoading(false);
+                if (!uploadResponse.data.success) {
+                    toast.error("Failed to upload video.");
                     return;
                 }
 
-                console.log("Transcription: ", transcription);
+                const video = uploadResponse.data.video;
+                const videoUrl = video.videoUrl;
 
-                // Request summary from Python backend
+                console.log("Video uploaded successfully:", videoUrl);
+
+                // Step 2: Send MP3 file to Python backend for transcription
+                const transcriptionFormData = new FormData();
+                transcriptionFormData.append("file", file);
+
+                const transcriptionResponse = await axios.post(
+                    "http://127.0.0.1:5000/transcribe",
+                    transcriptionFormData,
+                    {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    }
+                );
+
+                const transcription = transcriptionResponse.data.transcription;
+                if (!transcription) {
+                    toast.error("Failed to get transcription.");
+                    return;
+                }
+
+                console.log("Transcription:", transcription);
+
+                // Step 3: Request summary from Python backend
                 const summaryResponse = await axios.post(
                     "http://127.0.0.1:5000/modify",
                     {
-                        modification_input: "give me summary of the transcribed text.",
+                        modification_input: "Give me a summary of the transcribed text.",
                         transcription: transcription,
                     },
                     { headers: { "Content-Type": "application/json" } }
                 );
 
                 const summaryText = summaryResponse.data.modified_text;
-
                 if (!summaryText) {
                     toast.error("Failed to get summary from Python backend.");
-                    setLoading(false);
                     return;
                 }
 
-                console.log("Summary: ", summaryText);
+                console.log("Summary:", summaryText);
 
-                // Save transcription and summary in the database
-                const videoData = {
-                    videoId: "youtube_video_id", // Replace with actual YouTube video ID or custom ID if needed
+                // Step 4: Save transcription and summary in the database
+                const payload = {
+                    videoId: video._id,
                     transcription: transcription,
                     summary: summaryText,
                 };
 
                 const saveTranscriptionResponse = await axios.post(
                     "http://localhost:8000/api/video/uploadTranscription",
-                    videoData,
+                    payload,
                     {
                         headers: { "Content-Type": "application/json" },
                         withCredentials: true,
@@ -122,7 +148,7 @@ export default function Home() {
                 );
 
                 if (saveTranscriptionResponse.data.success) {
-                    navigate(`/summary/${videoData.videoId}`);
+                    navigate(`/summary/${video._id}`);
                 } else {
                     toast.error("Failed to save transcription.");
                 }
