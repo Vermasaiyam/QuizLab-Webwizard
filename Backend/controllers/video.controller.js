@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { Video } from "../models/video.model.js";
 import getDataUri from "../utils/dataUri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Question } from "../models/question.model.js";
 
 export const uploadVideo = async (req, res) => {
     try {
@@ -121,6 +122,33 @@ export const uploadTranscription = async (req, res) => {
     }
 };
 
+export const deleteVideo = async(req, res)=>{
+    try {
+        const { videoId } = req.params;
+        const { userId } = req.body;
+
+        if (!videoId || !userId) {
+            return res.status(400).json({ success: false, message: "Video ID and User ID are required." });
+        }
+
+        const video = await Video.findById(videoId);
+        if (!video) {
+            return res.status(404).json({ success: false, message: "Video not found." });
+        }
+
+        // Delete all associated questions
+        await Question.deleteMany({ videoId });
+
+        await User.findByIdAndUpdate(userId, { $pull: { videos: videoId } });
+
+        await Video.findByIdAndDelete(videoId);
+
+        return res.status(200).json({ success: true, message: "Video and associated questions deleted successfully." });
+    } catch (error) {
+        console.error("Error deleting video:", error);
+        res.status(500).json({ success: false, message: "Internal server error." });
+    }
+}
 
 export const getVideoDetails = async (req, res) => {
     try {

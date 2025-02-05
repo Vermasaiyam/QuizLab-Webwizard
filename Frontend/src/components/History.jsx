@@ -73,7 +73,7 @@ const HistoryPage = () => {
             }
         } catch (error) {
             console.error("Error deleting video:", error);
-            toast.error("An error occurred while deleting the video.");
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
