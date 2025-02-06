@@ -7,7 +7,7 @@ export const saveQuestion = async (req, res) => {
     try {
         const { quizQuestions, videoId, userId } = req.body;
 
-        console.log("Received Quiz Questions:", quizQuestions);
+        // console.log("Received Quiz Questions:", quizQuestions);
 
         // Step 1: Create Question documents
         const questions = [];

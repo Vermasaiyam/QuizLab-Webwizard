@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import 'react-circular-progressbar/dist/styles.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 
 const QuizPage = () => {
-    const { id } = useParams(); // The videoId
+    const { id } = useParams();
     const [questions, setQuestions] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [score, setScore] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -173,7 +174,6 @@ const QuizPage = () => {
                     <h2 className="text-3xl font-semibold text-gray-800">Quiz Completed!</h2>
                     <p className="text-lg mt-4 text-gray-600">Your Score:</p>
                     <div className="mt-6 flex items-center justify-center space-x-4">
-                        {/* Circle Score */}
                         <div className="w-32 h-32">
                             {getCircleScore()}
                         </div>
@@ -181,7 +181,6 @@ const QuizPage = () => {
 
                     <div className="mt-8">
                         <h3 className="text-xl font-semibold text-gray-800 mb-4">Correct Answers:</h3>
-
                         <ul className="list-disc list-inside text-lg text-gray-800">
                             {questions.map((question, index) => (
                                 <li key={index} className="flex flex-col space-y-2 mb-4">
@@ -189,7 +188,7 @@ const QuizPage = () => {
                                         <strong className="text-lg text-gray-900">Q{index + 1}:</strong>
                                         <span className="flex-1 text-gray-700">{selectedOptions[index] || "No Answer Selected"}</span>
                                     </div>
-                                    
+
                                     <div className="text-sm text-gray-600">
                                         <strong className="text-gray-900">Correct Answer:</strong> {question.correctAns[0]}
                                     </div>
@@ -203,8 +202,16 @@ const QuizPage = () => {
                             ))}
                         </ul>
                     </div>
-                </div>
 
+                    <div className="mt-6">
+                        <button
+                            className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300"
+                            onClick={() => navigate('/history')}
+                        >
+                            📜 View History
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
