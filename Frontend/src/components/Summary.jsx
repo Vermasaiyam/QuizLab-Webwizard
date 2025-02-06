@@ -8,6 +8,7 @@ const SummaryPage = () => {
     const { id } = useParams();
     const [videoDetails, setVideoDetails] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [numQuestions, setNumQuestions] = useState(5);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +41,7 @@ const SummaryPage = () => {
             const response = await axios.post(
                 'http://127.0.0.1:5000/modify',
                 {
-                    modification_input: 'give me the 5 quiz questions from the text in JSON format, in the format of question as string, options as array of strings, correctAns as string.',
+                    modification_input: `Give me ${numQuestions} quiz questions from the text in JSON format, in the format of question as string, options as array of strings, correctAns as string.`,
                     transcription: transcription,
                 },
                 { headers: { 'Content-Type': 'application/json' } }
@@ -149,6 +150,17 @@ const SummaryPage = () => {
                     </h3>
                     <p className="text-gray-700 text-lg">{videoDetails.summary}</p>
                 </div>
+
+                <label className="block text-gray-700 font-semibold mb-2">Select Number of Questions:</label>
+                <select
+                    value={numQuestions}
+                    onChange={(e) => setNumQuestions(Number(e.target.value))}
+                    className="w-full p-2 border rounded-md mb-4"
+                >
+                    {[2, 5, 10, 15, 20].map((num) => (
+                        <option key={num} value={num}>{num} Questions</option>
+                    ))}
+                </select>
 
                 <button
                     className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300 cursor-pointer"

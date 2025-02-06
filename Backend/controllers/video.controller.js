@@ -25,14 +25,14 @@ export const uploadVideo = async (req, res) => {
             resource_type: "video", // Specify the resource type as video
         });
 
-        // Create a new Video document with additional fields
         const newVideo = new Video({
             videoUrl: cloudResponse.secure_url,
-            title: videoTitle || video.originalname, // Use provided title or fallback
-            videoThumbnail, // Save thumbnail
-            youTubeUrl, // Save YouTube URL
-            summary: "Default summary", // Replace with actual summary if available
+            title: videoTitle || video.originalname,
+            videoThumbnail,
+            youTubeUrl: youTubeUrl || "",
+            summary: "Default summary",
         });
+        
 
         // Save the new Video document to the database
         await newVideo.save();
@@ -161,7 +161,7 @@ export const deleteVideo = async (req, res) => {
 
 export const getVideoDetails = async (req, res) => {
     try {
-        const { id } = req.params; // Get video ID from the URL parameters
+        const { id } = req.params;
 
         // Find the video by ID, assuming 'Video' is your model
         const video = await Video.findById(id); // You can populate the 'user' field if needed

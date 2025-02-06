@@ -108,7 +108,7 @@ const HistoryPage = () => {
 
     const fetchVideoDetails = async () => {
         try {
-            const response = await axios.get(`http://localhost:8000/api/video/summary/${selectedVideo.id}`, {
+            const response = await axios.get(`http://localhost:8000/api/video/summary/${selectedVideo._id}`, {
                 withCredentials: true, // Send cookies with request
             });
             if (response.data.success) {
