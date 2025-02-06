@@ -26,21 +26,6 @@ DOWNLOADS_DIR = "downloads"
 if not os.path.exists(DOWNLOADS_DIR):
     os.makedirs(DOWNLOADS_DIR)
 
-# Function to handle Google Docs Authentication
-def authenticate_google_docs():
-    creds = None
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file('credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
-    return creds
-
 # Serve the index.html page
 @app.route('/')
 def index():
@@ -141,37 +126,10 @@ def modify_text():
     return jsonify({'modified_text': modified_text})
 
 
-# API route to save modified text to Google Docs
-@app.route('/save_to_docs', methods=['POST'])
-def save_to_google_docs():
-    data = request.json
-    modified_text = data.get("modified_text")
-
-    # Authenticate and save to Google Docs
-    creds = authenticate_google_docs()
-    service = build('docs', 'v1', credentials=creds)
-
-    doc = {'title': 'Transcription Document'}
-    doc = service.documents().create(body=doc).execute()
-    document_id = doc['documentId']
-
-    requests = [{
-        'insertText': {
-            'location': {'index': 1},
-            'text': modified_text
-        }
-    }]
-    service.documents().batchUpdate(documentId=document_id, body={'requests': requests}).execute()
-
-    doc_url = f'https://docs.google.com/document/d/{document_id}'
-    # Sample response after creating a document in your save_to_google_docs function
-    return jsonify({'document_url': doc_url})
-
-
 # Entry point for WSGI
 if __name__ == "__main__":
     # Ensure uploads directory exists
     if not os.path.exists('uploads'):
         os.makedirs('uploads')
 
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000) 

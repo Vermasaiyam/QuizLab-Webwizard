@@ -5,17 +5,16 @@ import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
 const SummaryPage = () => {
-    const { id } = useParams(); // Get the video ID from the URL parameter
+    const { id } = useParams();
     const [videoDetails, setVideoDetails] = useState(null);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch video details from the backend
         const fetchVideoDetails = async () => {
             try {
                 const response = await axios.get(`http://localhost:8000/api/video/summary/${id}`, {
-                    withCredentials: true, // Send cookies with request
+                    withCredentials: true,
                 });
                 if (response.data.success) {
                     setVideoDetails(response.data.video);
