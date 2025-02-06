@@ -6,6 +6,7 @@ import { Loader2, Trash2 } from "lucide-react";
 import 'react-circular-progressbar/dist/styles.css';
 import { CircularProgressbar } from 'react-circular-progressbar';
 import { toast } from 'sonner';
+import moment from "moment";
 
 const HistoryPage = () => {
     const navigate = useNavigate();
@@ -152,14 +153,8 @@ const HistoryPage = () => {
             const jsonStartIndex = modifiedText.indexOf('[');
             const jsonEndIndex = modifiedText.lastIndexOf(']') + 1;
             const jsonString = modifiedText.slice(jsonStartIndex, jsonEndIndex);
-
-            // console.log('Extracted JSON string:', jsonString);
-
             const quizQuestions = JSON.parse(jsonString);
 
-            // console.log('Parsed quiz questions:', quizQuestions);
-
-            // Send the modified questions to the backend
             const saveQuizResponse = await axios.post(
                 'http://localhost:8000/api/question/saveQuestion',
                 { quizQuestions: quizQuestions, videoId: videoDetails._id },
@@ -198,7 +193,12 @@ const HistoryPage = () => {
                     <img src="coin_gif.webp" alt="Gold Coin" className="h-8 w-8" />
                     Total Points Earned: {totalScore}
                 </div>
-                <button className="bg-blue-500 text-white py-1.5 px-2.5 text-sm rounded-md shadow hover:bg-blue-600 transition cursor-pointer">Reedem Now</button>
+                <Link
+                    to={'https://cartiify.vercel.app/'}
+                    target="_blank"
+                >
+                    <button className="bg-blue-500 text-white py-1.5 px-2.5 text-sm rounded-md shadow hover:bg-blue-600 transition cursor-pointer">Reedem Now</button>
+                </Link>
             </div>
 
             {loading ? (
@@ -265,9 +265,18 @@ const HistoryPage = () => {
                                         />
                                     )}
 
+                                    <p className="text-right text-xs text-gray-500 mt-2">
+                                        {moment(video.createdAt).format("MMMM Do YYYY, h:mm A")}
+                                    </p>
                                     <h2 className="text-xl font-semibold mt-2">{video.title}</h2>
-                                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.summary}</p>
-                                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{video.transcription}</p>
+                                    <div about={video.transcription} className="flex flex-col mt-2">
+                                        <p className="text-sm font-semibold">Transcription: </p>
+                                        <p className="text-sm text-gray-600 line-clamp-2">{video.transcription}</p>
+                                    </div>
+                                    <div className="flex flex-col mt-2">
+                                        <p className="text-sm font-semibold">Summary: </p>
+                                        <p className="text-sm text-gray-600 line-clamp-2">{video.summary}</p>
+                                    </div>
                                 </div>
                             ))}
                         </div>
