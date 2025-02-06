@@ -75,11 +75,9 @@ const SummaryPage = () => {
                 toast.success('Quiz generated successfully!');
             } else {
                 toast.error('Failed to save quiz.');
-                // console.log("Failed to save the quiz");
             }
             navigate(`/quiz/${videoDetails._id}`);
         } catch (error) {
-            // console.error('Error generating quiz:', error.message);
             toast.error(error.message);
         } finally {
             setLoading(false);

@@ -13,6 +13,7 @@ const HistoryPage = () => {
     const [loading, setLoading] = useState(true);
     const [selectedVideo, setSelectedVideo] = useState(null);
     const [videoDetails, setVideoDetails] = useState(null);
+    const [numQuestions, setNumQuestions] = useState(5);
     const selectedVideoRef = useRef(null);
 
     const { user } = useSelector(store => store.auth);
@@ -135,7 +136,7 @@ const HistoryPage = () => {
             const response = await axios.post(
                 'http://127.0.0.1:5000/modify',
                 {
-                    modification_input: 'give me the 5 quiz questions from the text in JSON format, in the format of question as string, options as array of strings, correctAns as string.',
+                    modification_input: `Give me ${numQuestions} quiz questions from the text in JSON format, in the format of question as string, options as array of strings, correctAns as string.`,
                     transcription: transcription,
                 },
                 { headers: { 'Content-Type': 'application/json' } }
@@ -152,11 +153,11 @@ const HistoryPage = () => {
             const jsonEndIndex = modifiedText.lastIndexOf(']') + 1;
             const jsonString = modifiedText.slice(jsonStartIndex, jsonEndIndex);
 
-            console.log('Extracted JSON string:', jsonString);
+            // console.log('Extracted JSON string:', jsonString);
 
             const quizQuestions = JSON.parse(jsonString);
 
-            console.log('Parsed quiz questions:', quizQuestions);
+            // console.log('Parsed quiz questions:', quizQuestions);
 
             // Send the modified questions to the backend
             const saveQuizResponse = await axios.post(
@@ -347,10 +348,20 @@ const HistoryPage = () => {
                                 </>
                             ) : (
                                 <div className="mt-6 text-center">
-                                    <p className="text-lg text-gray-700 mb-4">No quiz taken yet.</p>
+                                    <p className="text-lg font-semibold text-gray-700 mb-4">No quiz taken yet.</p>
+                                    <label className="block text-gray-700 font-semibold mb-2">Select Number of Questions:</label>
+                                    <select
+                                        value={numQuestions}
+                                        onChange={(e) => setNumQuestions(Number(e.target.value))}
+                                        className="w-full p-2 border rounded-md mb-4"
+                                    >
+                                        {[2, 5, 10, 15, 20].map((num) => (
+                                            <option key={num} value={num}>{num} Questions</option>
+                                        ))}
+                                    </select>
                                     <button
                                         onClick={handleGenerateQuiz}
-                                        className="bg-blue-500 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all cursor-pointer"
+                                        className="w-full bg-[#2A3B5F] hover:bg-[#0B1930] text-white py-3 px-6 text-lg font-semibold rounded-md transition duration-300 cursor-pointer"
                                     >
                                         Take Quiz
                                     </button>
