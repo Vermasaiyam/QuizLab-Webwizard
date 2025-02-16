@@ -146,11 +146,17 @@ Replace `your_mongodb_uri_here`, `your_secret_key_here`, etc., with your actual 
 ### 7. Profile Page
 ![Profile Page](screenshots/profile.png)
 
+### 8. About Page
+![Profile Page](screenshots/about.png)
+
+### 7. Contact Page
+![Contact Page](screenshots/contact.png)
+
 ---
 
 ## Connect with Me
 
-- **Portfolio:** [Saiyam Verma's Portfolio](https://your-portfolio-link.com)
-- **LinkedIn:** [Saiyam Verma](https://www.linkedin.com/in/saiyamverma)
+- **Portfolio:** [Saiyam Verma's Portfolio](https://saiyams-portfolio.vercel.app/)
+- **LinkedIn:** [Saiyam Verma](https://www.linkedin.com/in/saiyam05)
 
 ---
