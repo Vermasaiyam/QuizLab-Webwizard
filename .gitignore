@@ -3,6 +3,7 @@ whisper_env/
 venv/
 
 uploads/
+downloads/
 
 .env
 
