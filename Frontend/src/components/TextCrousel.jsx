@@ -27,11 +27,11 @@ const TextCarousel = () => {
     }, []);
 
     return (
-        <div className="text-center min-w-full max-w-full mx-auto px-4">
+        <div className="text-center min-w-full max-w-[960px] pt-6 lg:pt-20 mx-auto px-4">
             {/* Animated Heading */}
             <h1
                 key={index} // Forces re-render
-                className={`text-3xl md:text-4xl font-extrabold my-6 text-white transition-opacity transform duration-500 ${
+                className={`text-3xl md:text-4xl font-extrabold my-3 md:my-6 text-pink-600 transition-opacity transform duration-500 ${
                     isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
                 }`}
             >
@@ -39,7 +39,7 @@ const TextCarousel = () => {
             </h1>
 
             {/* Subtitle */}
-            <p className="mt-2 text-lg md:text-xl text-gray-300 my-6 mb-8">
+            <p className="mt-2 text-lg md:text-xl text-gray-300 my-6 mb-8" >
                 Transform YouTube videos or audio into engaging quizzes and summaries,
                 providing your audience with an interactive learning experience.
                 Easily build, edit, and track the content through the platform.

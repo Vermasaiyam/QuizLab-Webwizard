@@ -7,7 +7,6 @@ import userRoutes from "./routes/user.routes.js"
 import videoRoutes from "./routes/video.routes.js"
 import questionRoutes from "./routes/question.routes.js"
 import { app, server } from "./socket/socket.js";
-// import path from "path";
 
 dotenv.config({});
 

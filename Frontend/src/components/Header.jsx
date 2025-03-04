@@ -41,8 +41,8 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-gray-800 px-6 text-white shadow-md z-10">
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="bg-black px-6 text-white shadow-lg z-10 border-b border-gray-900" >
+      <div className="container mx-auto flex justify-between items-center" >
         {/* Logo */}
         <Link to={"/"} className="flex items-center gap-3">
           <img src="logo.png" alt="QuizLabs" className="md:h-20 h-16" />
@@ -120,7 +120,12 @@ export default function Header() {
 
       {/* Mobile Menu - Only visible when menu is open */}
       {isMenuOpen && (
-        <div className="md:hidden absolute top-16 left-0 w-full bg-gray-900 shadow-lg z-10">
+        // <div className="absolute top-16 left-0 w-full bg-black/90 shadow-lg z-50">
+        <div className="md:hidden absolute top-16 left-0 w-full bg-black/100 border-b border-pink-600  shadow-lg z-50 opacity-90  rounded-lg">
+        {/* // <div className="md:hidden absolute top-16 left-0 w-full bg-white/10 backdrop-blur-md rounded-lg border border-white/30 shadow-lg z-50"> */}
+          
+
+
           <nav className="flex flex-col items-center space-y-4 py-4">
             {navItems.map(({ name, path }) => {
               const isActive = location.pathname === path;

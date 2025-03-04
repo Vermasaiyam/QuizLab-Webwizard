@@ -9,7 +9,7 @@ const images = [
 
 const FloatingCarousel = () => {
   return (
-    <div className="overflow-hidden w-full relative mt-40">
+    <div className="overflow-hidden w-full relative mt-22 md:mt-40">
       <motion.div
         className="flex space-x-8 w-max"
         animate={{ x: ['0%', '-100%'] }}

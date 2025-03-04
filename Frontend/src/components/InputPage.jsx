@@ -256,53 +256,77 @@ const InputPage = () => {
     };
 
     return (
-        <div className="bg-gradient-to-b from-black to-[#8E0651] min-h-[50vh] flex flex-col items-center justify-center text-white p-4">
-            <div className="bg-white opacity-80 text-gray-900 w-full max-w-xl mt-40 mb-10 p-6 rounded-2xl shadow-lg">
-                <h2 className="text-md font-bold mb-4">Turn YouTube videos or audio into quizzes and summaries.</h2>
+        <div className="bg-black min-h-[50vh] flex flex-col items-center justify-center p-4 pb-20" >
+            <div className="relative w-full max-w-xl mt-40 mb-10 p-6 rounded-2xl shadow-2xl 
+                  bg-black/40 backdrop-blur-xl text-white border border-white/20">
 
-                <div className="flex items-center mb-1 md:space-x-4 space-x-2">
-                    <label htmlFor="inputType" className="md:text-lg text-sm font-semibold text-gray-800">Select Input Type:</label>
+                {/* Soft Pink Glow */}
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-transparent 
+                    rounded-2xl blur-lg -z-10" ></div>
+
+                {/* Title */}
+                <h2 className="text-lg font-bold text-white text-center mb-4 uppercase tracking-wide">
+                    Transform YouTube Videos into Quizzes & Summaries
+                </h2>
+
+                {/* Input Type Selection */}
+                <div className="flex items-center mb-3 md:space-x-4 space-x-2">
+                    <label htmlFor="inputType" className="md:text-lg text-sm font-semibold text-gray-200">
+                        Select Input Type:
+                    </label>
                     <select
                         id="inputType"
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
-                        className="md:p-2 p-1 bg-white border-2 border-gray-300 md:text-base text-sm rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 ease-in-out"
+                        className="md:p-2 p-1 bg-gray-800 text-white md:text-base text-sm rounded-lg 
+                  shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF4A85] 
+                  transition duration-200 ease-in-out"
                     >
                         <option value="file">Upload Audio/Video</option>
                         <option value="youtube">Provide YouTube URL</option>
                     </select>
                 </div>
 
+                {/* YouTube Input */}
                 {inputType === "youtube" ? (
-                    <div className="py-4 bg-white rounded-lg shadow-md">
-                        <label className="block text-lg font-semibold text-gray-800 mb-2">Enter YouTube URL:</label>
+                    <div className="py-4 bg-black backdrop-blur-lg rounded-lg shadow-md">
+                        <label className="block text-lg font-semibold text-gray-200 mb-2">
+                            Enter YouTube URL:
+                        </label>
                         <input
                             type="text"
                             placeholder="Paste YouTube URL"
-                            className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200"
-                            onChange={(e) => setYouTubeUrl(e.target.value)} // Add state for URL
+                            className="w-full text-sm text-white bg-gray-800 border border-white/20 rounded-md py-2 px-3 
+                    focus:outline-none focus:ring-2 focus:ring-[#FF4A85] transition duration-300"
+                            onChange={(e) => setYouTubeUrl(e.target.value)}
                         />
                     </div>
                 ) : (
-                    <div className="py-6 bg-white rounded-lg shadow-lg">
-                        <label className="block text-lg font-semibold text-gray-800 mb-3">Upload Audio/Video here:</label>
-                        <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 space-y-4 hover:border-indigo-500 hover:bg-gray-50 transition duration-300">
+                    <div className="py-6 bg-black/60 backdrop-blur-lg rounded-lg shadow-lg">
+                        <label className="block text-lg font-semibold text-gray-200 mb-3">
+                            Upload Audio/Video here:
+                        </label>
+                        <div className="flex flex-col justify-center border-dashed border-gray-500 
+                        rounded-lg space-y-4 hover:border-[#FF4A85]  transition duration-300">
                             <input
                                 type="file"
                                 accept="audio/*,video/*"
-                                className="w-full text-sm text-gray-700 bg-gray-100 border border-gray-300 rounded-md py-3 px-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300 hover:bg-gray-200 file:hidden"
+                                className="w-full text-sm text-white bg-gray-800 border border-white/20 rounded-md py-3 px-4 
+                      focus:outline-none focus:ring-2 focus:ring-[#FF4A85] transition duration-300"
                                 onChange={handleFileChange}
                             />
-                            <div className="text-gray-500 text-sm">
+                            <div className="text-gray-400 text-sm">
                                 <p>Click to upload or drag and drop files here</p>
                             </div>
                         </div>
                     </div>
                 )}
 
+                {/* Upload Button */}
                 <div>
                     <button
-                        className="w-full mt-4 bg-[#D90452] hover:bg-[#B00346] text-white py-3 rounded-lg font-bold text-lg flex items-center justify-center space-x-2 cursor-pointer"
+                        className="w-full mt-4 bg-[#FF4A85] hover:bg-[#E03A70] text-white py-3 rounded-lg font-bold text-lg 
+                   flex items-center justify-center space-x-2 cursor-pointer transition duration-300 shadow-lg"
                         onClick={handleUpload}
                         disabled={loading}
                     >
@@ -320,6 +344,7 @@ const InputPage = () => {
                 </div>
             </div>
         </div>
+
     )
 }
 

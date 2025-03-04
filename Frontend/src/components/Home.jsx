@@ -6,8 +6,8 @@ import InputPage from "./InputPage";
 export default function Home() {
     return (
         <>
-            <div className="bg-gradient-to-b from-[#8E0651] to-black min-h-[90vh] flex flex-col items-center justify-center text-white p-4">
-                <div className="flex flex-col items-center justify-center text-white">
+            <div className="bg-black min-h-[90vh] flex flex-col items-center justify-center text-white p-4">
+                <div className="flex flex-col items-center justify-center text-pink-200 ">
                     <TextCarousel />
                 </div>
 
@@ -24,7 +24,6 @@ export default function Home() {
 
             </div>
             <div>
-
                 <InputPage />
             </div>
         </>

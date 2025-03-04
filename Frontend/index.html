@@ -4,6 +4,8 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>QuizLab</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
@@ -13,6 +15,9 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
+  <script>
+    AOS.init();
+  </script>
 </body>
 
 </html>
